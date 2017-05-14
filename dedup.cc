@@ -4,12 +4,8 @@
 #include <experimental/filesystem>
 #include <map>
 
-
 typedef uint32_t inode_t;
 typedef uint64_t filesize_t;
-std::map<inode_t, File *> uk_inode;
-std::multimap<filesize_t, inode_t> cx_size;
-
 
 class File {
 	public:
@@ -19,15 +15,21 @@ class File {
 		boost::multiprecision::uint128_t md5;
 		boost::multiprecision::uint512_t sha;
 
-		File(inode_t i, std::string n, filesize_t s) {
+		File(inode_t, std::string, filesize_t);
+};
+
+std::map<inode_t, File *> uk_inode;
+std::multimap<filesize_t, inode_t> cx_size;
+
+
+File::File(inode_t i, std::string n, filesize_t s) {
 			inode = i;
 			name = n;
 			size = s;
 			uk_inode.insert(std::pair<inode_t, File *>(inode, this));
 			cx_size.insert(std::pair<filesize_t, inode_t>(size, inode));
 
-		}
-};
+		};
 
 int main(int argv, char **argc) {
 

@@ -23,7 +23,7 @@ class File {
 			name = n;
 			size = s;
 			uk_inode.insert(std::pair<inode_t, File *>(inode, this));
-			cx_size.insert(std::pair<filesize_t, inode_t>(size, inode));
+			cx_size.insert(std::pair<filesize_t, inode_t>(size, inode)); //XXX should this just store File pointers instead of inodes?
 		}
 };
 std::map<inode_t, File *> File::uk_inode;
@@ -33,7 +33,6 @@ int main(int argv, char **argc) {
 
 	if (argv != 2)
 		return -1;
-
 
 	struct dirent **namelist;
 	int n;
@@ -49,6 +48,7 @@ int main(int argv, char **argc) {
 		}
 		free(namelist);
 	}
+
 	for (auto f : File::uk_inode) {
 		File *ff = f.second;
 		std::cout << ff->inode << "   " << ff->size << "   " << ff->name << std::endl;

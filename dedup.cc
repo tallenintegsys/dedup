@@ -1,4 +1,8 @@
 #include <dirent.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <string.h>
 #include <string>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <experimental/filesystem>
@@ -26,33 +30,66 @@ class File {
 			cx_size.insert(std::pair<filesize_t, inode_t>(size, inode)); //XXX should this just store File pointers instead of inodes?
 		}
 };
+
 std::map<inode_t, File *> File::uk_inode;
 std::multimap<filesize_t, inode_t> File::cx_size;
 
+void statdir(std::string path) {
+	struct dirent **de;
+
+	int n = scandirat(AT_FDCWD,path.c_str(), &de, NULL, alphasort); 
+	if (n == -1)
+		return;
+
+	while(n--) {
+		if (!strcmp(de[n]->d_name, "..") || !strcmp(de[n]->d_name, "."))
+			continue;
+		
+		if (de[n]->d_type == DT_DIR) {
+			//directory
+			std::cout << "dir:  " << de[n]->d_name << std::endl;
+			std::string p(path);
+			p+=std::string("/")+=std::string(de[n]->d_name);
+			statdir(p);
+		}
+		if (de[n]->d_type == DT_REG) {
+			//regular file
+			std::cout << "file:  " << de[n]->d_name << std::endl;
+			struct stat sb;
+			std::string p(path);
+			p+=std::string("/")+=std::string(de[n]->d_name);
+			if (stat(p.c_str(), &sb) == -1) {
+				perror("stat");
+				exit(EXIT_FAILURE);
+			}
+
+			new File(sb.st_ino, p, sb.st_size);
+		}
+	}
+}
+
 int main(int argv, char **argc) {
 
-	if (argv != 2)
-		return -1;
-
-	struct dirent **namelist;
-	int n;
-
-	n = scandir(argc[1], &namelist, NULL, alphasort);
-	if (n < 0)
-		perror("scandir");
-	else {
-		while (n--) {
-			std::cout << namelist[n]->d_name << std::endl;
-			new File(namelist[n]->d_ino, namelist[n]->d_name, namelist[n]->d_off);
-			free(namelist[n]);
-		}
-		free(namelist);
+	if (argv != 2) {
+		perror("Insuficient arguments");
+		exit(EXIT_FAILURE);
 	}
 
+	statdir(std::string(argc[1]));
+
+	std::cout << "By inode:"<< std::endl;
 	for (auto f : File::uk_inode) {
 		File *ff = f.second;
-		std::cout << ff->inode << "   " << ff->size << "   " << ff->name << std::endl;
+		std::cout << ff->inode << "\t   " << ff->size << "\t   " << ff->name << std::endl;
 	}
 
+	std::cout << std::endl << "By size:"<< std::endl;
+	for (auto f : File::cx_size) {
+		inode_t i = f.second;
+		File *ff = File::uk_inode[i];
+		std::cout << ff->inode << "\t   " << ff->size << "\t   " << ff->name << std::endl;
+	}
+
+	exit(EXIT_SUCCESS);
 }
 

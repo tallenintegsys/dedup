@@ -29,12 +29,27 @@ class File {
 			uk_inode.insert(std::pair<inode_t, File *>(inode, this));
 			cx_size.insert(std::pair<filesize_t, inode_t>(size, inode)); //XXX should this just store File pointers instead of inodes?
 		}
+
+		File(const std::string &filename, const std::string &path) {
+			std::string p(path);
+			p += std::string("/") += filename;
+			struct stat sb;
+			std::cout << "add file: " << p << std::endl;
+
+			if (stat(p.c_str(), &sb) == -1) {
+				perror("stat");
+				exit(EXIT_FAILURE);
+			}
+
+			new File(sb.st_ino, p, sb.st_size);
+
+		}
 };
 
 std::map<inode_t, File *> File::uk_inode;
 std::multimap<filesize_t, inode_t> File::cx_size;
 
-void statdir(std::string path) {
+void statdir(const std::string& path) {
 	struct dirent **de;
 
 	int n = scandirat(AT_FDCWD,path.c_str(), &de, NULL, alphasort); 
@@ -54,16 +69,9 @@ void statdir(std::string path) {
 		}
 		if (de[n]->d_type == DT_REG) {
 			//regular file
-			std::cout << "file:  " << de[n]->d_name << std::endl;
-			struct stat sb;
-			std::string p(path);
-			p+=std::string("/")+=std::string(de[n]->d_name);
-			if (stat(p.c_str(), &sb) == -1) {
-				perror("stat");
-				exit(EXIT_FAILURE);
-			}
-
-			new File(sb.st_ino, p, sb.st_size);
+			std::string filename(de[n]->d_name);
+			std::cout << "file:  " << filename << std::endl;
+			new File(filename, path);
 		}
 	}
 }
@@ -74,8 +82,7 @@ int main(int argv, char **argc) {
 		perror("Insuficient arguments");
 		exit(EXIT_FAILURE);
 	}
-
-	statdir(std::string(argc[1]));
+	statdir(argc[1]);
 
 	std::cout << "By inode:"<< std::endl;
 	for (auto f : File::uk_inode) {

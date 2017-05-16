@@ -1,4 +1,4 @@
-CXXFLAGS=--std=c++1z -fpermissive -lssl -lcrypto
+CXXFLAGS=-g --std=c++1z -fpermissive -lssl -lcrypto
 
 
 dedup: dedup.cc

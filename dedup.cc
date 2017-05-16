@@ -21,8 +21,7 @@ class File {
 		std::string name;
 		std::string relativepath;
 		fsize_t size;
-		boost::multiprecision::uint128_t md5;
-		boost::multiprecision::uint512_t sha;
+		unsigned char *sha = 0;
 		static std::map<ino_t, File *> uk_inode;
 		static std::multimap<fsize_t, ino_t> cx_size;
 
@@ -41,11 +40,8 @@ class File {
 			uk_inode.insert(std::pair<ino_t, File *>(inode, this));
 			cx_size.insert(std::pair<fsize_t, ino_t>(size, inode));
 			if (cx_size.count(sb.st_size) > 1) {
-				calc_sha();
-
 				// calc the md5 for this entrant
-				md5 = sb.st_atim.tv_sec; //XXX dummy
-				sha = sb.st_ctim.tv_nsec; //XXX dummy
+				sha = calc_sha();
 			}
 			if (cx_size.count(sb.st_size) == 2) {
 				// find the other identically sized file and calc it's sha512
@@ -53,13 +49,12 @@ class File {
 			// the others files should have already had there sha512s calc'd
 		}
 	private:
-		boost::multiprecision::uint512_t calc_sha() {
-
+		unsigned char *calc_sha() {
 			EVP_MD_CTX *mdctx;
 			const EVP_MD *md;
 			char *file_buffer;
-			unsigned char md_value[EVP_MAX_MD_SIZE];
 			unsigned int md_len, i;
+			unsigned char *md_value = new unsigned char [EVP_MAX_MD_SIZE+1];
 
 			OpenSSL_add_all_digests();
 
@@ -81,6 +76,7 @@ class File {
 			EVP_DigestFinal_ex(mdctx, md_value, &md_len);
 			EVP_MD_CTX_destroy(mdctx);
 
+			std::cout << md_len << std::endl;
 			printf("Digest is: ");
 			for(i = 0; i < md_len; i++)
 				printf("%02x", md_value[i]);
@@ -88,7 +84,7 @@ class File {
 
 			/* Call this once before exit. */
 			EVP_cleanup();
-			exit(0);
+			return md_value;
 		};
 };
 
@@ -132,14 +128,24 @@ int main(int argv, char **argc) {
 	std::cout << "By inode:"<< std::endl;
 	for (auto f : File::uk_inode) {
 		File *ff = f.second;
-		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->md5<<"\t "<<ff->sha<<"\t "<<ff->name << std::endl;
+		if (ff->sha) {
+		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name <<"\t ";
+		if (ff->sha) {
+			for(int i = 0; i < 64 ; i++)
+				printf("%02x", ff->sha[i]);
+			printf("\n");
+
+		} else {
+			std::cout << std::endl;
+		}
+	}
 	}
 
 	std::cout << std::endl << "By size:"<< std::endl;
 	for (auto f : File::cx_size) {
 		__ino_t i = f.second;
 		File *ff = File::uk_inode[i];
-		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->md5<<"\t "<<ff->sha<<"\t "<<ff->name << std::endl;
+		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name<<"\t "<<ff->sha << std::endl;
 	}
 
 	exit(EXIT_SUCCESS);

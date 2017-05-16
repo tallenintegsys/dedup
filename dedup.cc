@@ -7,11 +7,12 @@
 #include <boost/multiprecision/cpp_int.hpp>
 #include <experimental/filesystem>
 #include <map>
+#include <sys/mman.h>
+#include <openssl/md5.h>
 
 typedef off_t fsize_t;
 
 class File {
-
 	public:
 		__ino_t inode;
 		std::string name;
@@ -25,6 +26,8 @@ class File {
 			std::string p(path);
 			p += std::string("/") += filename;
 			struct stat sb;
+
+			name = p;
 
 			if (stat(p.c_str(), &sb) == -1) {
 				perror("stat");
@@ -47,6 +50,24 @@ class File {
 			}
 			// the others files should have already had there md5s
 			// and sha512s calculated
+		}
+	private:
+		boost::multiprecision::uint128_t calc_md5() {
+			int file_descript;
+			unsigned long file_size;
+			char* file_buffer;
+			unsigned char result[MD5_DIGEST_LENGTH];
+
+			std::cout << "using file: " << name;
+
+			file_descript = open(name.c_str(), O_RDONLY);
+			if(file_descript < 0) exit(-1);
+
+			file_buffer = (char *)mmap(0, size, PROT_READ, MAP_SHARED, file_descript, 0);
+			MD5((const unsigned char*) file_buffer, (unsigned long) size, result);
+			munmap(file_buffer, file_size);
+
+			return 0;
 		}
 };
 

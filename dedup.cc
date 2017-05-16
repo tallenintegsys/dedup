@@ -5,10 +5,13 @@
 #include <string.h>
 #include <string>
 #include <boost/multiprecision/cpp_int.hpp>
-#include <experimental/filesystem>
 #include <map>
 #include <sys/mman.h>
-#include <openssl/md5.h>
+#include <openssl/evp.h>
+
+
+
+
 
 typedef off_t fsize_t;
 
@@ -16,6 +19,7 @@ class File {
 	public:
 		__ino_t inode;
 		std::string name;
+		std::string relativepath;
 		fsize_t size;
 		boost::multiprecision::uint128_t md5;
 		boost::multiprecision::uint512_t sha;
@@ -23,13 +27,11 @@ class File {
 		static std::multimap<fsize_t, ino_t> cx_size;
 
 		File(const std::string &path, const std::string &filename) {
-			std::string p(path);
-			p += std::string("/") += filename;
+			name = filename;
+			relativepath.append(path) += std::string("/") += filename;
 			struct stat sb;
 
-			name = p;
-
-			if (stat(p.c_str(), &sb) == -1) {
+			if (stat(relativepath.c_str(), &sb) == -1) {
 				perror("stat");
 				exit(EXIT_FAILURE);
 			}
@@ -39,37 +41,57 @@ class File {
 			uk_inode.insert(std::pair<ino_t, File *>(inode, this));
 			cx_size.insert(std::pair<fsize_t, ino_t>(size, inode));
 			if (cx_size.count(sb.st_size) > 1) {
+				calc_sha();
 
-				// calc the md5 and sha512 for this entrant
+				// calc the md5 for this entrant
 				md5 = sb.st_atim.tv_sec; //XXX dummy
 				sha = sb.st_ctim.tv_nsec; //XXX dummy
 			}
 			if (cx_size.count(sb.st_size) == 2) {
-				// find the other identically sized file and
-				// calc it's md5 and sha512
+				// find the other identically sized file and calc it's sha512
 			}
-			// the others files should have already had there md5s
-			// and sha512s calculated
+			// the others files should have already had there sha512s calc'd
 		}
 	private:
-		boost::multiprecision::uint128_t calc_md5() {
-			int file_descript;
-			unsigned long file_size;
-			char* file_buffer;
-			unsigned char result[MD5_DIGEST_LENGTH];
+		boost::multiprecision::uint512_t calc_sha() {
 
-			std::cout << "using file: " << name;
+			EVP_MD_CTX *mdctx;
+			const EVP_MD *md;
+			char *file_buffer;
+			unsigned char md_value[EVP_MAX_MD_SIZE];
+			unsigned int md_len, i;
 
-			file_descript = open(name.c_str(), O_RDONLY);
+			OpenSSL_add_all_digests();
+
+			md = EVP_get_digestbyname("sha512");
+
+			if(!md) {
+				printf("Unknown message digest \n");
+				exit(EXIT_FAILURE);
+			}
+
+			int file_descript = open(relativepath.c_str(), O_RDONLY);
 			if(file_descript < 0) exit(-1);
 
-			file_buffer = (char *)mmap(0, size, PROT_READ, MAP_SHARED, file_descript, 0);
-			MD5((const unsigned char*) file_buffer, (unsigned long) size, result);
-			munmap(file_buffer, file_size);
+			file_buffer = (char *)mmap(NULL, size, PROT_READ, MAP_SHARED, file_descript, 0);
 
-			return 0;
-		}
+			mdctx = EVP_MD_CTX_create();
+			EVP_DigestInit_ex(mdctx, md, NULL);
+			EVP_DigestUpdate(mdctx, file_buffer, strlen(file_buffer));
+			EVP_DigestFinal_ex(mdctx, md_value, &md_len);
+			EVP_MD_CTX_destroy(mdctx);
+
+			printf("Digest is: ");
+			for(i = 0; i < md_len; i++)
+				printf("%02x", md_value[i]);
+			printf("\n");
+
+			/* Call this once before exit. */
+			EVP_cleanup();
+			exit(0);
+		};
 };
+
 
 std::map<ino_t, File *> File::uk_inode;
 std::multimap<fsize_t, ino_t> File::cx_size;

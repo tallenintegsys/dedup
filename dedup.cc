@@ -102,13 +102,13 @@ void statdir(const std::string& path) {
 	while(n--) {
 		if (!strcmp(de[n]->d_name, "..") || !strcmp(de[n]->d_name, "."))
 			continue;
-		
+
 		if (de[n]->d_type == DT_DIR) {
 			continue; //XXX just testing for now
 			//directory
 			std::string p(path);
 			p+=std::string("/")+=std::string(de[n]->d_name);
-			statdir(p); //to iterate is human, recurse devine!
+			statdir(p); //recurse
 		}
 		if (de[n]->d_type == DT_REG) {
 			//regular file
@@ -130,15 +130,15 @@ int main(int argv, char **argc) {
 	std::cout << "By inode:"<< std::endl;
 	for (auto f : File::uk_inode) {
 		File *ff = f.second;
-			std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name <<"\t ";
-			if (ff->sha) {
-				for(int i = 0; i < 64 ; i++)
-					printf("%02x", ff->sha[i]);
-				printf("\n");
+		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name <<"\t ";
+		if (ff->sha) {
+			for(int i = 0; i < 64 ; i++)
+				printf("%02x", ff->sha[i]);
+			printf("\n");
 
-			} else {
-				std::cout << std::endl;
-			}
+		} else {
+			std::cout << std::endl;
+		}
 	}
 
 	std::cout << std::endl << "By size:"<< std::endl;

@@ -9,10 +9,6 @@
 #include <sys/mman.h>
 #include <openssl/evp.h>
 
-
-
-
-
 typedef off_t fsize_t;
 
 class File {
@@ -22,12 +18,13 @@ class File {
 		std::string relativepath;
 		fsize_t size;
 		unsigned char *sha = 0;
-		static std::map<ino_t, File *> uk_inode;
-		static std::multimap<fsize_t, ino_t> cx_size;
+		static std::map<__ino_t, File *> uk_inode;
+		static std::multimap<fsize_t, __ino_t> cx_size;
 
 		File(const std::string &path, const std::string &filename) {
 			name = filename;
 			relativepath.append(path) += std::string("/") += filename;
+			std::cout << relativepath << std::endl;
 			struct stat sb;
 
 			if (stat(relativepath.c_str(), &sb) == -1) {
@@ -37,14 +34,17 @@ class File {
 			inode = sb.st_ino;
 			size = sb.st_size;
 
-			uk_inode.insert(std::pair<ino_t, File *>(inode, this));
-			cx_size.insert(std::pair<fsize_t, ino_t>(size, inode));
+			uk_inode.insert(std::pair<__ino_t, File *>(inode, this));
+			cx_size.insert(std::pair<fsize_t, __ino_t>(size, inode));
 			if (cx_size.count(sb.st_size) > 1) {
 				// calc the md5 for this entrant
 				sha = calc_sha();
 			}
 			if (cx_size.count(sb.st_size) == 2) {
 				// find the other identically sized file and calc it's sha512
+				std::multimap<fsize_t, __ino_t>::iterator it = cx_size.find(sb.st_size);
+				File *f = uk_inode[it->second];
+				f->sha = f->calc_sha();
 			}
 			// the others files should have already had there sha512s calc'd
 		}
@@ -89,8 +89,8 @@ class File {
 };
 
 
-std::map<ino_t, File *> File::uk_inode;
-std::multimap<fsize_t, ino_t> File::cx_size;
+std::map<__ino_t, File *> File::uk_inode;
+std::multimap<fsize_t, __ino_t> File::cx_size;
 
 void statdir(const std::string& path) {
 	struct dirent **de;
@@ -104,14 +104,16 @@ void statdir(const std::string& path) {
 			continue;
 		
 		if (de[n]->d_type == DT_DIR) {
+			continue; //XXX just testing for now
 			//directory
 			std::string p(path);
 			p+=std::string("/")+=std::string(de[n]->d_name);
-			statdir(p);
+			statdir(p); //to iterate is human, recurse devine!
 		}
 		if (de[n]->d_type == DT_REG) {
 			//regular file
 			std::string filename(de[n]->d_name);
+			std::cout << filename << std::endl;
 			new File(path, filename);
 		}
 	}
@@ -128,8 +130,22 @@ int main(int argv, char **argc) {
 	std::cout << "By inode:"<< std::endl;
 	for (auto f : File::uk_inode) {
 		File *ff = f.second;
-		if (ff->sha) {
-		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name <<"\t ";
+			std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name <<"\t ";
+			if (ff->sha) {
+				for(int i = 0; i < 64 ; i++)
+					printf("%02x", ff->sha[i]);
+				printf("\n");
+
+			} else {
+				std::cout << std::endl;
+			}
+	}
+
+	std::cout << std::endl << "By size:"<< std::endl;
+	for (auto f : File::cx_size) {
+		__ino_t i = f.second;
+		File *ff = File::uk_inode[i];
+		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name<<"\t ";
 		if (ff->sha) {
 			for(int i = 0; i < 64 ; i++)
 				printf("%02x", ff->sha[i]);
@@ -138,14 +154,6 @@ int main(int argv, char **argc) {
 		} else {
 			std::cout << std::endl;
 		}
-	}
-	}
-
-	std::cout << std::endl << "By size:"<< std::endl;
-	for (auto f : File::cx_size) {
-		__ino_t i = f.second;
-		File *ff = File::uk_inode[i];
-		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name<<"\t "<<ff->sha << std::endl;
 	}
 
 	exit(EXIT_SUCCESS);

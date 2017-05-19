@@ -1,6 +1,6 @@
 .Makefile.swp
 .exrc
 .ycm_extra_conf.py
-File.o
+*.o
 dedup
 .*.swp

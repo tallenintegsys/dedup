@@ -1,8 +1,6 @@
 #include <dirent.h>
 #include <fcntl.h>
-#include <string>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <string>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <map>

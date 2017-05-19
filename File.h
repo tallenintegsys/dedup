@@ -22,4 +22,5 @@ class File {
 		File(const std::string &path, const std::string &filename);
 	private:
 		unsigned char *calc_sha();
+		bool isHardlink(File *);
 };

@@ -18,17 +18,16 @@ File::File(const std::string &path, const std::string &filename) {
 
 	uk_inode.insert(std::pair<__ino_t, File *>(inode, this));
 	cx_size.insert(std::pair<fsize_t, File *>(size, this));
-	if (cx_size.count(sb.st_size) > 1) {
+	if (cx_size.count(size) > 1) {
 		// calc the md5 for this entrant
 		sha = calc_sha();
 	}
-	if (cx_size.count(sb.st_size) == 2) {
+	if (cx_size.count(size) == 2) {
 		// find the other identically sized file and calc it's sha512
 		// acording to the spec the first one is garenteed to be first in the container
-		std::multimap<fsize_t, File *>::iterator it = cx_size.find(sb.st_size);
+		std::multimap<fsize_t, File *>::iterator it = cx_size.find(size);
 		it->second->calc_sha();
 	}
-	// the others files should have already had there sha512s calc'd
 }
 
 unsigned char *File::calc_sha() {
@@ -68,3 +67,7 @@ unsigned char *File::calc_sha() {
 	EVP_cleanup();
 	return md_value;
 };
+
+bool File::isHardlink(File *file) {
+	return file->inode == this->inode;
+}

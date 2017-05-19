@@ -10,6 +10,8 @@
 
 #include "File.h"
 
+std::map<__ino_t, File *> File::uk_inode;
+std::multimap<fsize_t, __ino_t> File::cx_size;
 
 File::File(const std::string &path, const std::string &filename) {
 	name = filename;

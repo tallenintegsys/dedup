@@ -3,9 +3,6 @@
 #include <string>
 #include "File.h"
 
-std::map<__ino_t, File *> File::uk_inode;
-std::multimap<fsize_t, __ino_t> File::cx_size;
-
 void statdir(const std::string& path) {
 	struct dirent **de;
 
@@ -18,7 +15,7 @@ void statdir(const std::string& path) {
 			continue;
 
 		if (de[n]->d_type == DT_DIR) {
-			continue; //XXX just testing for now
+			continue; //XXX just testing for now d don't descend the tree
 			//directory
 			std::string p(path);
 			p+=std::string("/")+=std::string(de[n]->d_name);

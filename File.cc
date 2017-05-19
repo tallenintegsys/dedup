@@ -16,7 +16,12 @@ File::File(const std::string &path, const std::string &filename) {
 	inode = sb.st_ino;
 	size = sb.st_size;
 
-	uk_inode.insert(std::pair<__ino_t, File *>(inode, this));
+	auto r = uk_inode.insert(std::pair<__ino_t, File *>(inode, this));
+	if (!r.second) { //duplicate inode, must already be a hardlink
+		std::cout << filename << " dup" << std::endl;
+		hardlink = true;
+		r.first->second->hardlink = true;
+	}
 	cx_size.insert(std::pair<fsize_t, File *>(size, this));
 	if (cx_size.count(size) > 1) {
 		// calc the md5 for this entrant

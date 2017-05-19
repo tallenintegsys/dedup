@@ -16,6 +16,7 @@ class File {
 		std::string relativepath;
 		fsize_t size;
 		unsigned char *sha = 0;
+		bool hardlink;
 		static std::map<__ino_t, File *> uk_inode;
 		static std::multimap<fsize_t, File *> cx_size;
 

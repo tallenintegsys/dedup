@@ -1,0 +1,5 @@
+- there are memory leaks all over the place
+- make up your mind C or C++ this model is a bit silly
+- remember how to set-up automake
+- is that really the best way to descend the tree?
+- look at the ls source code

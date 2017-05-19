@@ -37,6 +37,9 @@ unsigned char *File::calc_sha() {
 	unsigned int md_len, i;
 	unsigned char *md_value = new unsigned char [EVP_MAX_MD_SIZE+1];
 
+	if (size == 0) //this can happen
+		return NULL;
+
 	OpenSSL_add_all_digests();
 
 	md = EVP_get_digestbyname("sha512");

@@ -15,7 +15,7 @@ void statdir(const std::string& path) {
 			continue;
 
 		if (de[n]->d_type == DT_DIR) {
-			continue; //XXX just testing for now d don't descend the tree
+			continue; //XXX just testing for now don't descend the tree
 			//directory
 			std::string p(path);
 			p+=std::string("/")+=std::string(de[n]->d_name);
@@ -39,12 +39,12 @@ int main(int argv, char **argc) {
 	statdir(argc[1]);
 
 	std::cout << "By inode:"<< std::endl;
-	for (auto f : File::uk_inode) {
-		File *ff = f.second;
-		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name <<"\t ";
-		if (ff->sha) {
+	for (auto pf : File::uk_inode) {
+		File *f = pf.second;
+		std::cout<<f->inode<<"\t "<<f->size<<"\t "<<"\t "<<f->name <<"\t ";
+		if (f->sha) {
 			for(int i = 0; i < 64 ; i++)
-				printf("%02x", ff->sha[i]);
+				printf("%02x", f->sha[i]);
 			printf("\n");
 
 		} else {
@@ -53,13 +53,12 @@ int main(int argv, char **argc) {
 	}
 
 	std::cout << std::endl << "By size:"<< std::endl;
-	for (auto f : File::cx_size) {
-		__ino_t i = f.second;
-		File *ff = File::uk_inode[i];
-		std::cout<<ff->inode<<"\t "<<ff->size<<"\t "<<"\t "<<ff->name<<"\t ";
-		if (ff->sha) {
+	for (auto pf : File::cx_size) {
+		auto f = pf.second;
+		std::cout<<f->inode<<"\t "<<f->size<<"\t "<<"\t "<<f->name<<"\t ";
+		if (f->sha) {
 			for(int i = 0; i < 64 ; i++)
-				printf("%02x", ff->sha[i]);
+				printf("%02x", f->sha[i]);
 			printf("\n");
 
 		} else {

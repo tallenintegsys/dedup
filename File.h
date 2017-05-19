@@ -19,7 +19,7 @@ class File {
 		fsize_t size;
 		unsigned char *sha = 0;
 		static std::map<__ino_t, File *> uk_inode;
-		static std::multimap<fsize_t, __ino_t> cx_size;
+		static std::multimap<fsize_t, File *> cx_size;
 
 		File(const std::string &path, const std::string &filename);
 	private:

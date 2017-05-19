@@ -1,17 +1,7 @@
-#include <dirent.h>
-#include <fcntl.h>
-#include <string>
-#include <sys/stat.h>
-#include <string>
-#include <boost/multiprecision/cpp_int.hpp>
-#include <map>
-#include <sys/mman.h>
-#include <openssl/evp.h>
-
 #include "File.h"
 
 std::map<__ino_t, File *> File::uk_inode;
-std::multimap<fsize_t, __ino_t> File::cx_size;
+std::multimap<fsize_t, File *> File::cx_size;
 
 File::File(const std::string &path, const std::string &filename) {
 	name = filename;
@@ -27,16 +17,16 @@ File::File(const std::string &path, const std::string &filename) {
 	size = sb.st_size;
 
 	uk_inode.insert(std::pair<__ino_t, File *>(inode, this));
-	cx_size.insert(std::pair<fsize_t, __ino_t>(size, inode));
+	cx_size.insert(std::pair<fsize_t, File *>(size, this));
 	if (cx_size.count(sb.st_size) > 1) {
 		// calc the md5 for this entrant
 		sha = calc_sha();
 	}
 	if (cx_size.count(sb.st_size) == 2) {
 		// find the other identically sized file and calc it's sha512
-		std::multimap<fsize_t, __ino_t>::iterator it = cx_size.find(sb.st_size);
-		File *f = uk_inode[it->second];
-		f->sha = f->calc_sha();
+		// acording to the spec the first one is garenteed to be first in the container
+		std::multimap<fsize_t, File *>::iterator it = cx_size.find(sb.st_size);
+		it->second->calc_sha();
 	}
 	// the others files should have already had there sha512s calc'd
 }

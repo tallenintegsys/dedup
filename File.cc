@@ -16,7 +16,7 @@ File::File(const std::string &path, const std::string &filename) {
 	inode = sb.st_ino;
 	size = sb.st_size;
 
-	auto r = uk_inode.insert(std::pair<__ino_t, File *>(inode, this));
+	auto r = uk_inode.insert(std::pair<__ino_t, File*>(inode, this));
 	if (!r.second) { //duplicate inode, must already be a hardlink
 		std::cout << filename << " dup" << std::endl;
 		hardlink = true;
@@ -28,10 +28,8 @@ File::File(const std::string &path, const std::string &filename) {
 		sha = calc_sha();
 	}
 	if (cx_size.count(size) == 2) {
-		// find the other identically sized file and calc it's sha512
-		// acording to the spec the first one is garenteed to be first in the container
-		std::multimap<fsize_t, File *>::iterator it = cx_size.find(size);
-		it->second->calc_sha();
+		std::multimap<fsize_t, File*>::iterator it = cx_size.find(size);
+		it->second->calc_sha(); // find the other identically sized file and calc it's sha512
 	}
 }
 

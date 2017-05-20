@@ -35,6 +35,18 @@ File::File(const std::string &path, const std::string &filename) {
 	}
 }
 
+bool File::operator==(File &rhs) {
+	if (size == rhs.size) {
+		if (sha	== NULL)
+			calc_sha();
+		if (rhs.sha == NULL)
+			rhs.calc_sha();
+		return sha == rhs.sha;
+	}
+
+	return false;
+}
+
 unsigned char *File::calc_sha() {
 	EVP_MD_CTX *mdctx;
 	const EVP_MD *md;

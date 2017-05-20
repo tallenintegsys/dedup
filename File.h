@@ -15,12 +15,13 @@ class File {
 		std::string name;
 		std::string relativepath;
 		fsize_t size;
-		unsigned char *sha = 0;
+		unsigned char *sha = NULL;
 		bool hardlink;
 		static std::map<__ino_t, File *> uk_inode;
 		static std::multimap<fsize_t, File *> cx_size;
 
-		File(const std::string &path, const std::string &filename);
+		File(const std::string &, const std::string &);
+		bool operator== (File &);
 	private:
 		unsigned char *calc_sha();
 		bool isHardlink(File *);

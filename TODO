@@ -3,3 +3,4 @@
 - remember how to set-up automake
 - is that really the best way to descend the tree?
 - look at the ls source code
+- need a version that two args (two trees) and only hardlinks across the trees not withen

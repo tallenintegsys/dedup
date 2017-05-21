@@ -22,10 +22,21 @@ void statdir(const std::string& path) {
 		if (de[n]->d_type == DT_REG) {
 			//regular file
 			std::string filename(de[n]->d_name);
-			std::cout << filename << std::endl;
+			//std::cout << filename << std::endl;
 			new File(path, filename);
 		}
 	}
+}
+
+void printsha(unsigned int *sha) {
+	for(int i = 0; i < 64 ; i++) {
+		if (i == 16) {
+			i+=32;
+			printf("...");
+		}
+		printf("%02x", sha[i]);
+	}
+	printf("\n");
 }
 
 int main(int argv, char **argc) {

@@ -33,8 +33,9 @@ class File {
 		   containers
 		 */
 		File(const std::string &, const std::string &);
-		bool operator== (File &);
 	private:
 		unsigned char *calc_sha();
 		bool isHardlink(File *);
+		void link(File *);
+		bool equal (File &);
 };

@@ -4,3 +4,4 @@
 *.o
 dedup
 .*.swp
+testfiles

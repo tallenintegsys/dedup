@@ -1,0 +1,91 @@
+\hypertarget{class_file}{}\section{File Class Reference}
+\label{class_file}\index{File@{File}}
+
+
+Relevent data about each file in the tree.  
+
+
+
+
+{\ttfamily \#include $<$File.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_file_a068da892ec6464ddf0dcbab2f55962f7}{File} (const std\+::string \&, const std\+::string \&)
+\begin{DoxyCompactList}\small\item\em populates various variables \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\+\_\+\+\_\+ino\+\_\+t \hyperlink{class_file_a9dadadf265382acd3ac5ca840829b6a6}{inode}
+\item 
+std\+::string \hyperlink{class_file_ac219294b38d3a3a422ad6ebacb041bb5}{name}
+\item 
+std\+::string \hyperlink{class_file_a2a3000e706022e1a6e37415ac3984884}{relativepath}
+\item 
+\hyperlink{_file_8h_a7c56ccac0642bb33c22bec7333682e67}{fsize\+\_\+t} \hyperlink{class_file_aa2ef804960a60130c63406db420e9cdc}{size}
+\item 
+unsigned char $\ast$ \hyperlink{class_file_ad44605a92eebe23c5738b0d64fdca7e1}{sha} = N\+U\+LL
+\item 
+bool \hyperlink{class_file_a77110ab18a54c978d72477ee49a0a4cd}{hardlink}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::map$<$ \+\_\+\+\_\+ino\+\_\+t, \hyperlink{class_file}{File} $\ast$ $>$ \hyperlink{class_file_a32733129d25971738ccba2122b0b91a5}{uk\+\_\+inode}
+\item 
+static std\+::multimap$<$ \hyperlink{_file_8h_a7c56ccac0642bb33c22bec7333682e67}{fsize\+\_\+t}, \hyperlink{class_file}{File} $\ast$ $>$ \hyperlink{class_file_ab6d7686b65b377692d301aeb171f2788}{cx\+\_\+size}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Relevent data about each file in the tree. 
+
+This class holds everything related to the files in the the tree. S\+H\+A512\textquotesingle{}s are calculated for files whose file sizes don\textquotesingle{}t make it obvious that they are distinct. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{File@{File}!File@{File}}
+\index{File@{File}!File@{File}}
+\subsubsection[{\texorpdfstring{File(const std\+::string \&, const std\+::string \&)}{File(const std::string &, const std::string &)}}]{\setlength{\rightskip}{0pt plus 5cm}File\+::\+File (
+\begin{DoxyParamCaption}
+\item[{const std\+::string \&}]{path, }
+\item[{const std\+::string \&}]{filename}
+\end{DoxyParamCaption}
+)}\hypertarget{class_file_a068da892ec6464ddf0dcbab2f55962f7}{}\label{class_file_a068da892ec6464ddf0dcbab2f55962f7}
+
+
+populates various variables 
+
+Always populated inode, name, relativepath, and size. adds an entry to the inode and size lookup containers 
+
+\subsection{Member Data Documentation}
+\index{File@{File}!cx\+\_\+size@{cx\+\_\+size}}
+\index{cx\+\_\+size@{cx\+\_\+size}!File@{File}}
+\subsubsection[{\texorpdfstring{cx\+\_\+size}{cx_size}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::multimap$<$ {\bf fsize\+\_\+t}, {\bf File} $\ast$ $>$ File\+::cx\+\_\+size\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_file_ab6d7686b65b377692d301aeb171f2788}{}\label{class_file_ab6d7686b65b377692d301aeb171f2788}
+\index{File@{File}!hardlink@{hardlink}}
+\index{hardlink@{hardlink}!File@{File}}
+\subsubsection[{\texorpdfstring{hardlink}{hardlink}}]{\setlength{\rightskip}{0pt plus 5cm}bool File\+::hardlink}\hypertarget{class_file_a77110ab18a54c978d72477ee49a0a4cd}{}\label{class_file_a77110ab18a54c978d72477ee49a0a4cd}
+it\textquotesingle{}s alread a hardlink \index{File@{File}!inode@{inode}}
+\index{inode@{inode}!File@{File}}
+\subsubsection[{\texorpdfstring{inode}{inode}}]{\setlength{\rightskip}{0pt plus 5cm}\+\_\+\+\_\+ino\+\_\+t File\+::inode}\hypertarget{class_file_a9dadadf265382acd3ac5ca840829b6a6}{}\label{class_file_a9dadadf265382acd3ac5ca840829b6a6}
+\index{File@{File}!name@{name}}
+\index{name@{name}!File@{File}}
+\subsubsection[{\texorpdfstring{name}{name}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::string File\+::name}\hypertarget{class_file_ac219294b38d3a3a422ad6ebacb041bb5}{}\label{class_file_ac219294b38d3a3a422ad6ebacb041bb5}
+\index{File@{File}!relativepath@{relativepath}}
+\index{relativepath@{relativepath}!File@{File}}
+\subsubsection[{\texorpdfstring{relativepath}{relativepath}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::string File\+::relativepath}\hypertarget{class_file_a2a3000e706022e1a6e37415ac3984884}{}\label{class_file_a2a3000e706022e1a6e37415ac3984884}
+\index{File@{File}!sha@{sha}}
+\index{sha@{sha}!File@{File}}
+\subsubsection[{\texorpdfstring{sha}{sha}}]{\setlength{\rightskip}{0pt plus 5cm}unsigned char$\ast$ File\+::sha = N\+U\+LL}\hypertarget{class_file_ad44605a92eebe23c5738b0d64fdca7e1}{}\label{class_file_ad44605a92eebe23c5738b0d64fdca7e1}
+S\+H\+A512 for the file \index{File@{File}!size@{size}}
+\index{size@{size}!File@{File}}
+\subsubsection[{\texorpdfstring{size}{size}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf fsize\+\_\+t} File\+::size}\hypertarget{class_file_aa2ef804960a60130c63406db420e9cdc}{}\label{class_file_aa2ef804960a60130c63406db420e9cdc}
+\index{File@{File}!uk\+\_\+inode@{uk\+\_\+inode}}
+\index{uk\+\_\+inode@{uk\+\_\+inode}!File@{File}}
+\subsubsection[{\texorpdfstring{uk\+\_\+inode}{uk_inode}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<$ \+\_\+\+\_\+ino\+\_\+t, {\bf File} $\ast$ $>$ File\+::uk\+\_\+inode\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_file_a32733129d25971738ccba2122b0b91a5}{}\label{class_file_a32733129d25971738ccba2122b0b91a5}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{_file_8h}{File.\+h}\item 
+\hyperlink{_file_8cc}{File.\+cc}\end{DoxyCompactItemize}

@@ -16,12 +16,15 @@ File::File(const std::string &path, const std::string &filename) {
 	inode = sb.st_ino;
 	size = sb.st_size;
 
+	// insert into the inode table
 	auto r = uk_inode.insert(std::pair<__ino_t, File*>(inode, this));
 	if (!r.second) { //true = sucess, false = duplicate inode, must already be a hardlink
 		//std::cout << filename << " dup" << std::endl;
 		hardlink = true;
 		r.first->second->hardlink = true;
 	}
+
+	// insert into the size table
 	cx_size.insert(std::pair<fsize_t, File *>(size, this));
 	if (cx_size.count(size) > 1) {
 		auto rp = cx_size.equal_range(size); //range of file with same size
@@ -32,6 +35,8 @@ File::File(const std::string &path, const std::string &filename) {
 				link(it->second); //make a hardlink
 		}
 	}
+
+
 }
 
 void File::link(File* file) { //just print it out for now
@@ -61,8 +66,10 @@ unsigned char *File::calc_sha() {
 	unsigned int md_len;
 	unsigned char *md_value = new unsigned char [EVP_MAX_MD_SIZE+1];
 
-	if (size == 0) //this can happen
+	if (size == 0) { //this can happen
+		delete[] md_value;
 		return NULL;
+	}
 
 	OpenSSL_add_all_digests();
 

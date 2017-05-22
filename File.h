@@ -11,9 +11,9 @@ typedef off_t fsize_t;
 
 //!  Relevent data about each file in the tree
 /*!
-  This class holds everything related to the files in the the tree.
-  SHA512's are calculated for files whose file sizes don't make it
-  obvious that they are distinct. 
+  This class holds everything related to the files in the tree.
+  SHA512's are calculated for files whose file sizes don't make
+  it obvious that they are distinct.
 */
 class File {
 	public:
@@ -23,8 +23,8 @@ class File {
 		fsize_t size;
 		unsigned char *sha = NULL; /*!< SHA512 for the file */ 
 		bool hardlink; /*!< it's alread a hardlink */ 
-		static std::map<__ino_t, File *> uk_inode;
-		static std::multimap<fsize_t, File *> cx_size;
+		static std::map<__ino_t, File *> uk_inode; /*< files by inode */
+		static std::multimap<fsize_t, File *> cx_size; /*< files by size */
 
 		 //! populates various variables
 		 /*!

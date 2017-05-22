@@ -17,25 +17,24 @@ File::File(const std::string &path, const std::string &filename) {
 	size = sb.st_size;
 
 	auto r = uk_inode.insert(std::pair<__ino_t, File*>(inode, this));
-	if (!r.second) { //duplicate inode, must already be a hardlink
+	if (!r.second) { //true = sucess, false = duplicate inode, must already be a hardlink
 		//std::cout << filename << " dup" << std::endl;
 		hardlink = true;
 		r.first->second->hardlink = true;
 	}
 	cx_size.insert(std::pair<fsize_t, File *>(size, this));
 	if (cx_size.count(size) > 1) {
-		//std::multimap<fsize_t, File*>::iterator it = cx_size.find(size);
-		auto rp = cx_size.equal_range(size);
+		auto rp = cx_size.equal_range(size); //range of file with same size
 		for(auto it = rp.first; it != rp.second; it++) {
 			if (this == it->second)
-				continue;
+				continue; //well, we don't want to link to ourselves
 			if (equal(*it->second))// find the other identically sized file(s)
-				link(it->second);
+				link(it->second); //make a hardlink
 		}
 	}
 }
 
-void File::link(File* file) {
+void File::link(File* file) { //just print it out for now
 	std::cout << "link0: " << name << "   " << inode << "   ";
 	std::cout << "link1: " << file->name << "   " << file->inode << "   ";
 	std::cout << std::endl << std::endl;
@@ -79,7 +78,7 @@ unsigned char *File::calc_sha() {
 
 	file_buffer = (char *)mmap(NULL, size, PROT_READ, MAP_SHARED, file_descript, 0);
 
-	mdctx = EVP_MD_CTX_create();
+	mdctx = EVP_MD_CTX_create(); //XXX make sure this stuff is Kosher
 	EVP_DigestInit_ex(mdctx, md, NULL);
 	EVP_DigestUpdate(mdctx, file_buffer, strlen(file_buffer));
 	EVP_DigestFinal_ex(mdctx, md_value, &md_len);

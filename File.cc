@@ -6,7 +6,7 @@ std::multimap<fsize_t, File *> File::cx_size;
 File::File(const std::string &path, const std::string &filename) {
 	name = filename;
 	relativepath.append(path) += std::string("/") += filename;
-	std::cout << relativepath << std::endl;
+//	std::cout << relativepath << std::endl;
 	struct stat sb;
 
 	if (stat(relativepath.c_str(), &sb) == -1) {
@@ -62,7 +62,7 @@ void File::calc_sha() {
 	const EVP_MD *md;
 	char *file_buffer;
 	unsigned int md_len;
-	unsigned char *md_value = new unsigned char [EVP_MAX_MD_SIZE+1];
+	unsigned char *md_value = new unsigned char [EVP_MAX_MD_SIZE];
 
 	if (size == 0) { //this can happen
 		delete[] md_value;
@@ -91,7 +91,6 @@ void File::calc_sha() {
 
 	/* Call this once before exit. */
 	EVP_cleanup();
-	md_value[64] = '\0';
 	sha = md_value;
 	return;
 };

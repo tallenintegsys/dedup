@@ -2,7 +2,7 @@ CXXFLAGS=-g --std=c++1z -fpermissive
 
 
 dedup: dedup.o File.o
-	$(CXX) $(CXXFLAGS) -lssl -lcrypto -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lssl -lcrypto
 
 dedup.o: dedup.cc
 

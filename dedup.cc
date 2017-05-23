@@ -47,6 +47,8 @@ int main(int argv, char **argc) {
 	}
 	statdir(argc[1]);
 
+	exit(EXIT_SUCCESS); //XXX stop here
+
 	std::cout << "By inode:"<< std::endl;
 	for (auto pf : File::uk_inode) {
 		File *f = pf.second;

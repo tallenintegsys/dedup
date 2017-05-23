@@ -2,10 +2,11 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <string>
-#include <boost/multiprecision/cpp_int.hpp>
+#include <string.h>
 #include <map>
 #include <sys/mman.h>
 #include <openssl/evp.h>
+#include <iostream>
 
 typedef off_t fsize_t;
 

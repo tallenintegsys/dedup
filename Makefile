@@ -1,4 +1,4 @@
-CXXFLAGS=-g --std=c++1z -fpermissive
+CXXFLAGS= -g --std=c++14
 
 
 dedup: dedup.o File.o

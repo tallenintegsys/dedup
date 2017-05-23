@@ -13,7 +13,7 @@ void statdir(const std::string& path) {
 			continue;
 
 		if (de[n]->d_type == DT_DIR) {
-			continue; //XXX just testing for now don't descend the tree
+			//continue; //XXX just testing for now don't descend the tree
 			//directory
 			std::string p(path);
 			p+=std::string("/")+=std::string(de[n]->d_name);

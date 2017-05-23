@@ -10,3 +10,7 @@ File.o: File.cc File.h
 
 clean:
 	rm -f dedup *.o
+
+valgrind: dedup
+	valgrind --leak-check=full ./dedup testfiles/
+

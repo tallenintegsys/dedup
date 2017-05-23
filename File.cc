@@ -26,7 +26,7 @@ File::File(const std::string &path, const std::string &filename) {
 
 	// insert into the size table
 	cx_size.insert(std::pair<fsize_t, File *>(size, this));
-	if (cx_size.count(size) > 1) {
+	if ((cx_size.count(size) > 1) && (!hardlink)) {
 		auto rp = cx_size.equal_range(size); //range of file with same size
 		for(auto it = rp.first; it != rp.second; it++) {
 			if (this == it->second)
@@ -35,8 +35,6 @@ File::File(const std::string &path, const std::string &filename) {
 				link(it->second); //make a hardlink
 		}
 	}
-
-
 }
 
 void File::link(File* file) { //just print it out for now
@@ -54,12 +52,12 @@ bool File::equal(File &rhs) {
 			calc_sha();
 		if (rhs.sha == NULL)
 			rhs.calc_sha();
-		return sha == rhs.sha;
+		return memcmp(sha, rhs.sha, EVP_MAX_MD_SIZE) == 0;
 	}
 	return false;
 }
 
-unsigned char *File::calc_sha() {
+void File::calc_sha() {
 	EVP_MD_CTX *mdctx;
 	const EVP_MD *md;
 	char *file_buffer;
@@ -68,7 +66,7 @@ unsigned char *File::calc_sha() {
 
 	if (size == 0) { //this can happen
 		delete[] md_value;
-		return NULL;
+		return;
 	}
 
 	OpenSSL_add_all_digests();
@@ -93,7 +91,9 @@ unsigned char *File::calc_sha() {
 
 	/* Call this once before exit. */
 	EVP_cleanup();
-	return md_value;
+	md_value[64] = '\0';
+	sha = md_value;
+	return;
 };
 
 bool File::isHardlink(File *file) {

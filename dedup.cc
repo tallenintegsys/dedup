@@ -23,7 +23,7 @@ void statdir(const std::string& path) {
 			//regular file
 			std::string filename(de[n]->d_name);
 			//std::cout << filename << std::endl;
-			new File(path, filename);
+			new File(path, filename); //this is actually not a memory leak
 		}
 	}
 }

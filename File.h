@@ -25,6 +25,7 @@ class File {
 		bool hardlink; /*!< it's alread a hardlink */ 
 		static std::map<__ino_t, File *> uk_inode; /*< files by inode */
 		static std::multimap<fsize_t, File *> cx_size; /*< files by size */
+		static std::multimap<__ino_t, File *> cx_hardlinks; //XXX for test only
 
 		 //! populates various variables
 		 /*!
@@ -34,7 +35,7 @@ class File {
 		 */
 		File(const std::string &, const std::string &);
 	private:
-		unsigned char *calc_sha();
+		void calc_sha();
 		bool isHardlink(File *);
 		void link(File *);
 		bool equal (File &);

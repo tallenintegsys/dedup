@@ -23,7 +23,7 @@ class File {
 		std::string relativepath;
 		fsize_t size;
 		unsigned char *sha = NULL; /*!< SHA512 for the file */ 
-		bool hardlink; /*!< it's alread a hardlink */ 
+		bool hardlink = false; /*!< it's alread a hardlink */
 		static std::map<__ino_t, File *> uk_inode; /*< files by inode */
 		static std::multimap<fsize_t, File *> cx_size; /*< files by size */
 		static std::multimap<__ino_t, File *> cx_hardlinks; //XXX for test only

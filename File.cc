@@ -1,6 +1,6 @@
 #include "File.h"
 
-std::map<__ino_t, File *> File::uk_inode;
+std::multimap<__ino_t, File *> File::uk_inode;
 std::multimap<fsize_t, File *> File::cx_size;
 
 File::File(const std::string &path, const std::string &filename) {
@@ -17,12 +17,9 @@ File::File(const std::string &path, const std::string &filename) {
 	size = sb.st_size;
 
 	// insert into the inode table
-	auto r = uk_inode.insert(std::pair<__ino_t, File*>(inode, this));
-	if (!r.second) { //true = sucess, false = duplicate inode, must already be a hardlink
-		//std::cout << filename << " dup" << std::endl;
+	uk_inode.insert(std::pair<__ino_t, File*>(inode, this));
+	if (sb.st_nlink > 1)
 		hardlink = true;
-		r.first->second->hardlink = true;
-	}
 
 	// insert into the size table
 	cx_size.insert(std::pair<fsize_t, File *>(size, this));
@@ -37,10 +34,7 @@ File::File(const std::string &path, const std::string &filename) {
 	}
 }
 
-void File::link(File* file) { //just print it out for now
-	std::cout << "link0: " << relativepath << "   " << inode << "   "<<std::endl;
-	std::cout << "link1: " << file->relativepath << "   " << file->inode << "   "<<std::endl;
-	std::cout << std::endl;
+void File::link(File* file) {
 }
 
 bool File::equal(File &rhs) {

@@ -13,3 +13,7 @@ Target: x86_64-pc-linux-gnu
 Configured with: ../gcc/configure --prefix=/home/tallen --with-gmp=/home/tallen --disable-multilib
 Thread model: posix
 gcc version 8.0.0 20170513 (experimental) (GCC)
+
+It appears to be correctly identifying duplicate files (the actual linking is trivial) but I don't believe it. It's traversing like 1TB file systems way too fast--yeah I know about disc caching and it is RAID 1 but--I must be missing something and the RAID can't be helping much as I'm single threaded.
+
+For now I've relaxed my compiler requirements as I develop with my fancy compiled compiler but I have to rebuild it on my server as thats where the 2TB filesystem (backups and some movies too) is.

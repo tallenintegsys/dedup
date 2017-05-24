@@ -95,6 +95,7 @@ void File::calc_sha() {
 
 	/* Call this once before exit. */
 	EVP_cleanup();
+	munmap(file_buffer, strlen(file_buffer));
 	sha = md_value;
 	return;
 };

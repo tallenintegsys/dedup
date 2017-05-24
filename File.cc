@@ -38,7 +38,7 @@ File::File(const std::string &path, const std::string &filename) {
 }
 
 void File::link(File* file) { //just print it out for now
-	std::cout << "link0: " << relativepath << name << "   " << inode << "   "<<std::endl;
+	std::cout << "link0: " << relativepath << "   " << inode << "   "<<std::endl;
 	std::cout << "link1: " << file->relativepath << "   " << file->inode << "   "<<std::endl;
 	std::cout << std::endl;
 }

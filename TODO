@@ -1,5 +1,7 @@
 - there are memory leaks all over the place
   - smart pointers
+  - RAII
+  - should I really worry about it
 - make up your mind C or C++ this model is a bit silly
 - remember how to set-up automake
 - is that really the best way to descend the tree?
@@ -7,3 +9,4 @@
 - need a version that takes multiple args (trees) and only hard-links across the trees not within
 - valgrind
 - Doxygen
+- strongly considering trailing return types for consistency with, among other things, lambda functions

@@ -82,6 +82,10 @@ void File::calc_sha() {
 	if(file_descript < 0) exit(-1);
 
 	file_buffer = (char *)mmap(NULL, size, PROT_READ, MAP_SHARED, file_descript, 0);
+	if (file_buffer == MAP_FAILED) {
+		perror("mmap");
+		exit(EXIT_FAILURE);
+	}
 
 	mdctx = EVP_MD_CTX_create(); //XXX make sure this stuff is Kosher
 	EVP_DigestInit_ex(mdctx, md, NULL);

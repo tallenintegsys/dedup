@@ -1,5 +1,6 @@
 #include <dirent.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <string>
 #include <string.h>
@@ -25,6 +26,7 @@ class File {
 		fsize_t size;
 		unsigned char *sha = NULL; /*!< SHA512 for the file */ 
 		bool hardlink = false; /*!< it's alread a hardlink */
+		bool dup = false; //XXX testing
 		static std::multimap<__ino_t, File *> uk_inode; /*< files by inode */
 		static std::multimap<fsize_t, File *> cx_size; /*< files by size */
 

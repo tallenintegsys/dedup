@@ -50,13 +50,21 @@ int main(int argv, char **argc) {
 	std::cout << "By inode:"<< std::endl;
 	for (auto pf : File::uk_inode) {
 		File *f = pf.second;
-		std::cout<<std::setw(10)<<f->inode<<std::setw(15)<<f->size;
 		if (f->hardlink)
-			std::cout << "\033[32;40m";
-		std::cout <<std::setw(10)<<f->name <<"\033[0m \t ";
+			std::cout << "H";
+		if (f->dup)
+			std::cout << "D";
+
+		std::cout << " \t";
+		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::left << std::setw(40) << f->name.substr(0,35) << "\t" ;
 		if (f->sha) {
-			for(int i = 0; i < 64 ; i++)
+			for(int i = 0; i < 64 ; i++) {
+				if (i==10) {
+					std::cout << "...";
+					i+=44;
+				}
 				printf("%02x", f->sha[i]);
+			}
 			printf("\n");
 
 		} else {

@@ -35,6 +35,7 @@ File::File(const std::string &path, const std::string &filename) {
 }
 
 void File::link(File* file) {
+	dup = true;
 }
 
 bool File::equal(File &rhs) {
@@ -73,7 +74,10 @@ void File::calc_sha() {
 	}
 
 	int file_descript = open(relativepath.c_str(), O_RDONLY);
-	if(file_descript < 0) exit(-1);
+	if(file_descript < 0) {
+		perror("open for sha");
+		exit(EXIT_FAILURE);
+	}
 
 	file_buffer = (char *)mmap(NULL, size, PROT_READ, MAP_SHARED, file_descript, 0);
 	if (file_buffer == MAP_FAILED) {
@@ -90,6 +94,7 @@ void File::calc_sha() {
 	/* Call this once before exit. */
 	EVP_cleanup();
 	munmap(file_buffer, strlen(file_buffer));
+	close(file_descript);
 	sha = md_value;
 	return;
 };

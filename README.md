@@ -4,7 +4,7 @@ This utility will spin through a tree of directories searching for duplicate fil
 This is a bit of a mess right now- it's a hodgepodge of C and C++ (mostly containers) as it is partially an effort to gain as much proficiency with C++ containers as I have with Java containers. The Dia diagram is a bit of a hack too, it's half class diagram half E-R (think SQL) diagram because SQL RDBMSs (MySQL, Postgress, Oracle etc) are what I'm used to.
 
 
-Compiler note: I'm using gcc built from source, I think it compiles okay on more pedestrian compilers but I'm not really checking. I figure by the time this sees the light of day gcc 8 will be more mainstream and I was toying with some experimental C++ stuff. Also I am using some C++17 (okay, technically C++1z) stuff...
+Compiler note: I'm using gcc built from source, It compiles okay on more pedestrian compilers because I have to recompile on one of my file servers to test. I figure by the time this sees the light of day gcc 8 will be more mainstream and I was toying with some experimental C++ stuff. I have stopped using C++17 (okay, technically C++1z) stuff for now...
 
 here is an excerpt of gcc -v
 COLLECT_GCC=gcc

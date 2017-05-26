@@ -4,7 +4,7 @@
 void statdir(const std::string& path) {
 	struct dirent **de;
 
-	int n = scandirat(AT_FDCWD,path.c_str(), &de, NULL, alphasort); 
+	int n = scandirat(AT_FDCWD, path.c_str(), &de, NULL, alphasort);
 	if (n == -1)
 		return;
 
@@ -24,8 +24,10 @@ void statdir(const std::string& path) {
 			std::string filename(de[n]->d_name);
 			//std::cout << filename << std::endl;
 			new File(path, filename); //this is actually not a memory leak
+
 		}
 	}
+	free(de);
 }
 
 void printsha(unsigned int *sha) {

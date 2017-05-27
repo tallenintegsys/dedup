@@ -30,25 +30,70 @@ RootDirectory::RootDirectory(std::string& path) {
 	free(de);
 }
 
-RootDirectory::AddFile(File &file) {
+void RootDirectory::AddFile(File *file) {
 
 	// insert into the inode table
-	uk_inode.insert(std::pair<__ino_t, File*>(inode, this));
-	if (sb.st_nlink > 1)
-		hardlink = true;
+	filesbyinode.insert(std::pair<__ino_t, File*>(file->inode, file));
+	if (file->nlink > 1)
+		file->hardlink = true;
 
 	// insert into the size table
-	cx_size.insert(std::pair<fsize_t, File *>(size, this));
-	if ((cx_size.count(size) > 1) && (!hardlink)) {
-		auto rp = cx_size.equal_range(size); //range of file with same size
+	filesbysize.insert(std::pair<fsize_t, File *>(file->size, file));
+	if ((filesbysize.count(file->size) > 1) && (!file->hardlink)) {
+		auto rp = filesbysize.equal_range(file->size); //range of file with same size
 		for(auto it = rp.first; it != rp.second; it++) {
-			if (this == it->second)
+			if (file == it->second)
 				continue; //well, we don't want to link to ourselves
-			if (equal(*it->second))// find the other identically sized file(s)
-				link(it->second); //make a hardlink
+			if (file->equal(*it->second))// find the other identically sized file(s)
+				file->link(it->second); //make a hardlink
 		}
 	}
 }
+
+void RootDirectory::PrintByInode (void) {
+	std::cout << "By inode:"<< std::endl;
+	for (auto pf : filesbyinode) {
+		File *f = pf.second;
+		if (f->hardlink)
+			std::cout << "H";
+		if (f->dup)
+			std::cout << "D";
+
+		std::cout << " \t";
+		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::left << std::setw(40) << f->name.substr(0,35) << "\t" ;
+		if (f->sha) {
+			for(int i = 0; i < 64 ; i++) {
+				if (i==10) {
+					std::cout << "...";
+					i+=44;
+				}
+				printf("%02x", f->sha[i]);
+			}
+			printf("\n");
+
+		} else {
+			std::cout << std::endl;
+		}
+	}
+}
+
+void RootDirectory::PrintBySize (void) {
+
+	std::cout << std::endl << "By size:"<< std::endl;
+	for (auto pf : filesbysize) {
+		auto f = pf.second;
+		std::cout<<f->inode<<"\t "<<f->size<<"\t "<<"\t "<<f->name<<"\t ";
+		if (f->sha) {
+			for(int i = 0; i < 64 ; i++)
+				printf("%02x", f->sha[i]);
+			printf("\n");
+
+		} else {
+			std::cout << std::endl;
+		}
+	}
+}
+
 
 RootDirectory::~RootDirectory() {
 

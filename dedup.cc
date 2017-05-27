@@ -49,46 +49,6 @@ int main(int argv, char **argc) {
 	}
 	statdir(argc[1]);
 
-	std::cout << "By inode:"<< std::endl;
-	for (auto pf : File::uk_inode) {
-		File *f = pf.second;
-		if (f->hardlink)
-			std::cout << "H";
-		if (f->dup)
-			std::cout << "D";
-
-		std::cout << " \t";
-		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::left << std::setw(40) << f->name.substr(0,35) << "\t" ;
-		if (f->sha) {
-			for(int i = 0; i < 64 ; i++) {
-				if (i==10) {
-					std::cout << "...";
-					i+=44;
-				}
-				printf("%02x", f->sha[i]);
-			}
-			printf("\n");
-
-		} else {
-			std::cout << std::endl;
-		}
-	}
-	exit(EXIT_SUCCESS); //XXX stop here
-
-	std::cout << std::endl << "By size:"<< std::endl;
-	for (auto pf : File::cx_size) {
-		auto f = pf.second;
-		std::cout<<f->inode<<"\t "<<f->size<<"\t "<<"\t "<<f->name<<"\t ";
-		if (f->sha) {
-			for(int i = 0; i < 64 ; i++)
-				printf("%02x", f->sha[i]);
-			printf("\n");
-
-		} else {
-			std::cout << std::endl;
-		}
-	}
-
 	exit(EXIT_SUCCESS);
 }
 

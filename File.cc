@@ -1,8 +1,5 @@
 #include "File.h"
 
-std::multimap<__ino_t, File *> File::uk_inode;
-std::multimap<fsize_t, File *> File::cx_size;
-
 File::File(const std::string &path, const std::string &filename) {
 	name = filename;
 	relativepath.append(path) += std::string("/") += filename;
@@ -15,6 +12,7 @@ File::File(const std::string &path, const std::string &filename) {
 	}
 	inode = sb.st_ino;
 	size = sb.st_size;
+	nlink = sb.st_nlink;
 
 }
 

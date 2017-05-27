@@ -16,9 +16,11 @@ class RootDirectory {
 	std::multimap<__ino_t, File *> filesbyinode;
 	std::multimap<fsize_t, File *> filesbysize;
 
-	AddFile(File &file);
+	void AddFile(File *file);
 
 	public:
 	RootDirectory(std::string& path);
+	void PrintByInode (void);
+	void PrintBySize (void);
 	~RootDirectory();
 };

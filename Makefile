@@ -8,6 +8,8 @@ dedup.o: dedup.cc
 
 File.o: File.cc File.h
 
+RootDirectory.o: RootDirectory.cc RootDirectory.h
+
 clean:
 	rm -f dedup *.o
 

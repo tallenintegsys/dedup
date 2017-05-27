@@ -19,3 +19,5 @@ It appears to be correctly identifying duplicate files (the actual linking is tr
 For now I've relaxed my compiler requirements as I develop with my fancy compiled compiler but I have to rebuild it on my server as thats where the 2TB filesystem (backups and some movies too) is.
 
 In the words of Jeremy Clarkson, this is properly fast!
+
+Now that I have some clarity as to how this will evolve, time to sort out my class hierarchy / OO / model which has been BS heretofore.

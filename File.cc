@@ -16,22 +16,6 @@ File::File(const std::string &path, const std::string &filename) {
 	inode = sb.st_ino;
 	size = sb.st_size;
 
-	// insert into the inode table
-	uk_inode.insert(std::pair<__ino_t, File*>(inode, this));
-	if (sb.st_nlink > 1)
-		hardlink = true;
-
-	// insert into the size table
-	cx_size.insert(std::pair<fsize_t, File *>(size, this));
-	if ((cx_size.count(size) > 1) && (!hardlink)) {
-		auto rp = cx_size.equal_range(size); //range of file with same size
-		for(auto it = rp.first; it != rp.second; it++) {
-			if (this == it->second)
-				continue; //well, we don't want to link to ourselves
-			if (equal(*it->second))// find the other identically sized file(s)
-				link(it->second); //make a hardlink
-		}
-	}
 }
 
 void File::link(File* file) {

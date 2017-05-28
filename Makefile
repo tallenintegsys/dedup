@@ -1,7 +1,7 @@
 CXXFLAGS= -g --std=c++1z
 
 
-dedup: dedup.o File.o
+dedup: dedup.o File.o RootDirectory.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lssl -lcrypto
 
 dedup.o: dedup.cc

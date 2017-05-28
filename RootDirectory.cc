@@ -1,6 +1,10 @@
 #include "RootDirectory.h"
 
-RootDirectory::RootDirectory(std::string& path) {
+RootDirectory::RootDirectory(const std::string &path) {
+	scan(path);
+}
+
+void RootDirectory::scan(const std::string &path) {
 	struct dirent **de;
 
 	int n = scandirat(AT_FDCWD, path.c_str(), &de, NULL, alphasort);
@@ -16,7 +20,7 @@ RootDirectory::RootDirectory(std::string& path) {
 			//directory
 			std::string p(path);
 			p+=std::string("/")+=std::string(de[n]->d_name);
-			RootDirectory(p); //recurse
+			scan(p); //recurse
 		}
 		if (de[n]->d_type == DT_REG) {
 			//regular file
@@ -29,6 +33,7 @@ RootDirectory::RootDirectory(std::string& path) {
 	}
 	free(de);
 }
+
 
 void RootDirectory::AddFile(File *file) {
 
@@ -96,5 +101,6 @@ void RootDirectory::PrintBySize (void) {
 
 
 RootDirectory::~RootDirectory() {
-
+	for (auto it = filesbysize.begin(); it != filesbysize.end(); it ++)
+		delete (*it).second;
 }

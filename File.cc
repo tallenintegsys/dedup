@@ -18,6 +18,7 @@ File::File(const std::string &path, const std::string &filename) {
 
 void File::link(File* file) {
 	dup = true;
+	file->dup = true;//XXX this is for testing
 }
 
 bool File::equal(File &rhs) {

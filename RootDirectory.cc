@@ -26,7 +26,7 @@ void RootDirectory::scan(const std::string &path) {
 			//regular file
 			std::string filename(de[n]->d_name);
 			//std::cout << filename << std::endl;
-			File *file = new File(path, filename); //this is actually not a memory leak
+			File *file = new File(path, filename);
 			AddFile(file);
 
 		}
@@ -45,7 +45,7 @@ void RootDirectory::AddFile(File *file) {
 	// insert into the size table
 	filesbysize.insert(std::pair<fsize_t, File *>(file->size, file));
 	if ((filesbysize.count(file->size) > 1) && (!file->hardlink)) {
-		auto rp = filesbysize.equal_range(file->size); //range of file with same size
+		auto rp = filesbysize.equal_range(file->size); //range of files with same size
 		for(auto it = rp.first; it != rp.second; it++) {
 			if (file == it->second)
 				continue; //well, we don't want to link to ourselves
@@ -88,10 +88,15 @@ void RootDirectory::PrintBySize (void) {
 	std::cout << std::endl << "By size:"<< std::left << std::endl;
 	for (auto pf : filesbysize) {
 		auto f = pf.second;
-		std::cout<<f->inode<<"\t "<<f->size<<"\t "<<"\t "<<f->name<<"\t ";
+		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::setw(40) << f->name.substr(0,35) << "\t" ;
 		if (f->sha) {
-			for(int i = 0; i < 64 ; i++)
+			for(int i = 0; i < 64 ; i++) {
+				if (i==10) {
+					std::cout << "...";
+					i+=44;
+				}
 				printf("%02x", f->sha[i]);
+			}
 			printf("\n");
 
 		} else {

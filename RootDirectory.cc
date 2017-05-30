@@ -56,7 +56,7 @@ void RootDirectory::AddFile(File *file) {
 }
 
 void RootDirectory::PrintByInode (void) {
-	std::cout << "By inode:"<< std::endl;
+	std::cout << "By inode:"<< std::left << std::endl;
 	for (auto pf : filesbyinode) {
 		File *f = pf.second;
 		if (f->hardlink)
@@ -65,7 +65,7 @@ void RootDirectory::PrintByInode (void) {
 			std::cout << "D";
 
 		std::cout << " \t";
-		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::left << std::setw(40) << f->name.substr(0,35) << "\t" ;
+		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::setw(40) << f->name.substr(0,35) << "\t" ;
 		if (f->sha) {
 			for(int i = 0; i < 64 ; i++) {
 				if (i==10) {
@@ -80,11 +80,12 @@ void RootDirectory::PrintByInode (void) {
 			std::cout << std::endl;
 		}
 	}
+	std::cout << std::right << std::endl;
 }
 
 void RootDirectory::PrintBySize (void) {
 
-	std::cout << std::endl << "By size:"<< std::endl;
+	std::cout << std::endl << "By size:"<< std::left << std::endl;
 	for (auto pf : filesbysize) {
 		auto f = pf.second;
 		std::cout<<f->inode<<"\t "<<f->size<<"\t "<<"\t "<<f->name<<"\t ";
@@ -97,6 +98,7 @@ void RootDirectory::PrintBySize (void) {
 			std::cout << std::endl;
 		}
 	}
+	std::cout << std::right << std::endl;
 }
 
 

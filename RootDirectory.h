@@ -5,6 +5,7 @@
 #include <string>
 #include <string.h>
 #include <map>
+#include <vector>
 #include <sys/mman.h>
 #include <openssl/evp.h>
 #include <iostream>
@@ -12,7 +13,6 @@
 #include "File.h"
 
 class RootDirectory {
-
 	std::multimap<__ino_t, File *> filesbyinode;
 	std::multimap<fsize_t, File *> filesbysize;
 
@@ -20,6 +20,7 @@ class RootDirectory {
 	void AddFile(File *file);
 
 	public:
+	static std::vector<RootDirectory *> rootdirectories;
 	 //! build a directory tree starting at path
 	 /*!
 	   Contains multimaps of all files by inode and size

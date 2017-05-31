@@ -1,6 +1,9 @@
 #include "RootDirectory.h"
 
+std::vector<RootDirectory*> RootDirectory::rootdirectories = std::vector<RootDirectory*>();
+
 RootDirectory::RootDirectory(const std::string &path) {
+	rootdirectories.push_back(this);
 	scan(path);
 }
 

@@ -4,6 +4,7 @@ std::vector<RootDirectory*> RootDirectory::rootdirectories = std::vector<RootDir
 
 RootDirectory::RootDirectory(const std::string &path) {
 	rootdirectories.push_back(this);
+	this->id = rootdirectories.size();
 	this->path = path;
 	scan(path);
 }

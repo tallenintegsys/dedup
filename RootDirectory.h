@@ -21,6 +21,7 @@ class RootDirectory {
 
 	public:
 	std::string path;
+	int id;
 	static std::vector<RootDirectory *> rootdirectories;
 	 //! build a directory tree starting at path
 	 /*!

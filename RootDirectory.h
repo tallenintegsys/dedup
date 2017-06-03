@@ -20,6 +20,7 @@ class RootDirectory {
 	void AddFile(File *file);
 
 	public:
+	std::string path;
 	static std::vector<RootDirectory *> rootdirectories;
 	 //! build a directory tree starting at path
 	 /*!

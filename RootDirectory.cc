@@ -4,8 +4,10 @@ std::vector<RootDirectory*> RootDirectory::rootdirectories = std::vector<RootDir
 
 RootDirectory::RootDirectory(const std::string &path) {
 	rootdirectories.push_back(this);
+	this->path = path;
 	scan(path);
 }
+
 
 void RootDirectory::scan(const std::string &path) {
 	struct dirent **de;
@@ -41,12 +43,12 @@ void RootDirectory::scan(const std::string &path) {
 void RootDirectory::AddFile(File *file) {
 
 	// insert into the inode table
-	filesbyinode.insert(std::pair<__ino_t, File*>(file->inode, file));
+	filesbyinode.insert(std::pair(file->inode, file));
 	if (file->nlink > 1)
 		file->hardlink = true;
 
 	// insert into the size table
-	filesbysize.insert(std::pair<fsize_t, File *>(file->size, file));
+	filesbysize.insert(std::pair(file->size, file));
 	if ((filesbysize.count(file->size) > 1) && (!file->hardlink)) {
 		auto rp = filesbysize.equal_range(file->size); //range of files with same size
 		for(auto it = rp.first; it != rp.second; it++) {
@@ -57,6 +59,7 @@ void RootDirectory::AddFile(File *file) {
 		}
 	}
 }
+
 
 void RootDirectory::PrintByInode (void) {
 	std::cout << "By inode:"<< std::left << std::endl;
@@ -86,8 +89,8 @@ void RootDirectory::PrintByInode (void) {
 	std::cout << std::right << std::endl;
 }
 
-void RootDirectory::PrintBySize (void) {
 
+void RootDirectory::PrintBySize (void) {
 	std::cout << std::endl << "By size:"<< std::left << std::endl;
 	for (auto pf : filesbysize) {
 		auto f = pf.second;

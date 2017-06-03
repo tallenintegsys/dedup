@@ -25,9 +25,7 @@ int main(int argc, char **argv) {
 	while (true)
 	{
 		int oi = -1;
-		int c = getopt_long (argc, argv,
-				"nt",
-				long_options, &oi);
+		int c = getopt_long (argc, argv, "nt", long_options, &oi);
 		if (c == -1)
 			break;
 
@@ -41,12 +39,15 @@ int main(int argc, char **argv) {
 				exit(EXIT_FAILURE);
 		}
 	}
+
 	for (int i = optind; i < argc ; i++) {
-		std::cout << argv[i] << std::endl;
+		//std::cout << argv[i] << std::endl;
 		new RootDirectory(std::string(argv[i]));
 	}
 
+	//XXX test code, print the stuff out
 	for (RootDirectory *rd : RootDirectory::rootdirectories) {
+		std::cout << rd->path << std::endl;
 		rd->PrintByInode();
 		rd->PrintBySize();
 	}

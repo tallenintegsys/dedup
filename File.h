@@ -21,8 +21,10 @@ typedef off_t fsize_t;
 class File {
 	public:
 	__ino_t inode;
+	std::string root;
+	std::string relpath;
 	std::string name;
-	std::string relativepath;
+	std::string fullpath;
 	fsize_t size;
 	unsigned char *sha = NULL; /*!< SHA512 for the file */ 
 	bool hardlink = false; /*!< it's alread a hardlink */
@@ -35,7 +37,7 @@ class File {
 	   size. adds an entry to the inode and size lookup
 	   containers
 	 */
-	File(const std::string &, const std::string &);
+	File(const std::string &, const std::string &, const std::string &);
 	bool equal (File &);
 	void link(File *);
 	bool isHardlink(File *);

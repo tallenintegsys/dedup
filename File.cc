@@ -1,22 +1,21 @@
 #include "File.h"
 
-File::File(const std::string &path, const std::string &filename) {
-	name = filename;
-	if (path[path.size()-1] != '/')
-		relativepath.append(path) += std::string("/") += filename;
-	else
-		relativepath.append(path) += filename;
-//	std::cout << relativepath << std::endl;
+File::File(const std::string &root, const std::string &relpath, const std::string &name) {
+	this->root = root;
+	this->relpath = relpath;
+	this->name = name;
+	this->fullpath += root;
+	this->fullpath += std::string("/") += relpath;
+	this->fullpath += std::string("/") += name;
 	struct stat sb;
 
-	if (stat(relativepath.c_str(), &sb) == -1) {
+	if (stat(fullpath.c_str(), &sb) == -1) {
 		perror("stat");
 		exit(EXIT_FAILURE);
 	}
 	inode = sb.st_ino;
 	size = sb.st_size;
 	nlink = sb.st_nlink;
-
 }
 
 void File::link(File* file) {
@@ -59,7 +58,7 @@ void File::calc_sha() {
 		exit(EXIT_FAILURE);
 	}
 
-	int file_descript = open(relativepath.c_str(), O_RDONLY);
+	int file_descript = open(fullpath.c_str(), O_RDONLY);
 	if(file_descript < 0) {
 		perror("open for sha");
 		exit(EXIT_FAILURE);

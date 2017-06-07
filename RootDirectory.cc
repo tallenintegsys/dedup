@@ -2,18 +2,20 @@
 
 std::vector<RootDirectory*> RootDirectory::rootdirectories = std::vector<RootDirectory*>();
 
-RootDirectory::RootDirectory(const std::string &path) {
+RootDirectory::RootDirectory(const std::string &root) {
 	rootdirectories.push_back(this);
 	this->id = rootdirectories.size();
-	this->path = path;
-	scan(path);
+	this->root = (root[root.size()-1] == '/') ? root.substr(0,root.size()-1) : root;
+	scan("");
 }
 
 
-void RootDirectory::scan(const std::string &path) {
+void RootDirectory::scan(std::string relpath) {
 	struct dirent **de;
-
-	int n = scandirat(AT_FDCWD, path.c_str(), &de, NULL, alphasort);
+	std::string fullpath(root);
+	fullpath += "/";
+	fullpath += relpath;
+	int n = scandirat(AT_FDCWD, fullpath.c_str(), &de, NULL, alphasort);
 	if (n == -1)
 		return;
 
@@ -24,20 +26,18 @@ void RootDirectory::scan(const std::string &path) {
 		if (de[n]->d_type == DT_DIR) {
 			//continue; //XXX just testing for now don't descend the tree
 			//directory
-			std::string p(path);
-			if (p[p.size()-1] != '/')
-				p+=std::string("/")+=std::string(de[n]->d_name);
-			else
-				p+=std::string(de[n]->d_name);
-			scan(p); //recurse
+			if (relpath[0] == '/')
+				relpath = relpath.substr(1, std::string::npos);
+			if (relpath[relpath.size()-1] != '/')
+				relpath = relpath.substr(0, -1);
+			scan(relpath); //recurse
 		}
 		if (de[n]->d_type == DT_REG) {
 			//regular file
 			std::string filename(de[n]->d_name);
-			std::cout << filename << std::endl;
-			File *file = new File(path, filename);
+			File *file = new File(root, relpath, filename);
+			std::cout << file->fullpath << std::endl;
 			AddFile(file);
-
 		}
 	}
 	free(de);
@@ -63,8 +63,11 @@ void RootDirectory::AddFile(File *file) {
 		}
 	}
 
-	// insert into fullpath table
-	filesbyrelativepath.insert(std::pair(file->relativepath, file));
+	// insert into relativepath table
+	std::string p(file->relpath);
+	p += "/";
+	p += file->name;
+	filesbyrelativepath.insert(std::pair(p, file));
 }
 
 

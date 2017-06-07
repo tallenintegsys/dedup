@@ -17,11 +17,11 @@ class RootDirectory {
 	std::multimap<fsize_t, File *> filesbysize;
 	std::map<std::string, File *> filesbyrelativepath;
 
-	void scan(const std::string &path);
+	void scan(std::string path);
 	void AddFile(File *file);
 
 	public:
-	std::string path;
+	std::string root;
 	int id;
 	static std::vector<RootDirectory *> rootdirectories;
 	 //! build a directory tree starting at path

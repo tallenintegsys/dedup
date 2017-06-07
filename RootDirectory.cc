@@ -59,6 +59,9 @@ void RootDirectory::AddFile(File *file) {
 				file->link(it->second); //make a hardlink
 		}
 	}
+
+	// insert into fullpath table
+	filesbyrelativepath.insert(std::pair(file->relativepath, file));
 }
 
 
@@ -96,6 +99,29 @@ void RootDirectory::PrintBySize (void) {
 	for (auto pf : filesbysize) {
 		auto f = pf.second;
 		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::setw(40) << f->name.substr(0,35) << "\t" ;
+		if (f->sha) {
+			for(int i = 0; i < 64 ; i++) {
+				if (i==10) {
+					std::cout << "...";
+					i+=44;
+				}
+				printf("%02x", f->sha[i]);
+			}
+			printf("\n");
+
+		} else {
+			std::cout << std::endl;
+		}
+	}
+	std::cout << std::right << std::endl;
+}
+
+
+void RootDirectory::PrintByRelativepath (void) {
+	std::cout << std::endl << "By relative path:"<< std::left << std::endl;
+	for (auto pf : filesbyrelativepath) {
+		auto f = pf.second;
+		std::cout<<std::setw(30) << pf.first << std::setw(10) << f->size << std::setw(40) << f->name.substr(0,35) << "\t" ;
 		if (f->sha) {
 			for(int i = 0; i < 64 ; i++) {
 				if (i==10) {

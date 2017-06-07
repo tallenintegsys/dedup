@@ -2,7 +2,10 @@
 
 File::File(const std::string &path, const std::string &filename) {
 	name = filename;
-	relativepath.append(path) += std::string("/") += filename;
+	if (path[path.size()-1] != '/')
+		relativepath.append(path) += std::string("/") += filename;
+	else
+		relativepath.append(path) += filename;
 //	std::cout << relativepath << std::endl;
 	struct stat sb;
 

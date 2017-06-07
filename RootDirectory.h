@@ -15,6 +15,7 @@
 class RootDirectory {
 	std::multimap<__ino_t, File *> filesbyinode;
 	std::multimap<fsize_t, File *> filesbysize;
+	std::map<std::string, File *> filesbyrelativepath;
 
 	void scan(const std::string &path);
 	void AddFile(File *file);
@@ -40,6 +41,12 @@ class RootDirectory {
 	   ...for debugging
 	 */
 	void PrintBySize (void);
+
+	 //! Print all files by relativepath
+	 /*!
+	   ...for debugging
+	 */
+	void PrintByRelativepath (void);
 
 	 //! cleanup your mess (RAII)
 	 /*!

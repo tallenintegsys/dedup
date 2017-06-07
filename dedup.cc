@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
 		std::cout << rd->path << std::endl;
 		rd->PrintByInode();
 		rd->PrintBySize();
+		rd->PrintByRelativepath();
 	}
 
 	exit(EXIT_SUCCESS);

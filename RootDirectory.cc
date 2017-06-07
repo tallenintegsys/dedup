@@ -25,13 +25,16 @@ void RootDirectory::scan(const std::string &path) {
 			//continue; //XXX just testing for now don't descend the tree
 			//directory
 			std::string p(path);
-			p+=std::string("/")+=std::string(de[n]->d_name);
+			if (p[p.size()-1] != '/')
+				p+=std::string("/")+=std::string(de[n]->d_name);
+			else
+				p+=std::string(de[n]->d_name);
 			scan(p); //recurse
 		}
 		if (de[n]->d_type == DT_REG) {
 			//regular file
 			std::string filename(de[n]->d_name);
-			//std::cout << filename << std::endl;
+			std::cout << filename << std::endl;
 			File *file = new File(path, filename);
 			AddFile(file);
 

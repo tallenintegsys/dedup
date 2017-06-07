@@ -22,8 +22,7 @@ void printsha(unsigned int *sha) {
 }
 
 int main(int argc, char **argv) {
-	while (true)
-	{
+	while (true) {
 		int oi = -1;
 		int c = getopt_long (argc, argv, "nt", long_options, &oi);
 		if (c == -1)

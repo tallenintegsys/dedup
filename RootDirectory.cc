@@ -26,11 +26,7 @@ void RootDirectory::scan(std::string relpath) {
 		if (de[n]->d_type == DT_DIR) {
 			//continue; //XXX just testing for now don't descend the tree
 			//directory
-			if (relpath[0] == '/')
-				relpath = relpath.substr(1, std::string::npos);
-			if (relpath[relpath.size()-1] != '/')
-				relpath = relpath.substr(0, -1);
-			scan(relpath); //recurse
+			scan(de[n]->d_name); //recurse
 		}
 		if (de[n]->d_type == DT_REG) {
 			//regular file

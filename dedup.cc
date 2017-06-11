@@ -47,8 +47,8 @@ int main(int argc, char **argv) {
 	//XXX test code, print the stuff out
 	for (RootDirectory *rd : RootDirectory::rootdirectories) {
 		std::cout << rd->root << std::endl;
-		rd->PrintByInode();
-		rd->PrintBySize();
+//		rd->PrintByInode();
+//		rd->PrintBySize();
 		rd->PrintByRelativepath();
 	}
 

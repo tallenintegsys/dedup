@@ -5,7 +5,8 @@ File::File(const std::string &root, const std::string &relpath, const std::strin
 	this->relpath = relpath;
 	this->name = name;
 	this->fullpath += root;
-	this->fullpath += std::string("/") += relpath;
+	if (relpath.size() > 0)
+		this->fullpath += std::string("/") += relpath;
 	this->fullpath += std::string("/") += name;
 	struct stat sb;
 

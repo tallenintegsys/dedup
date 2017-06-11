@@ -14,7 +14,10 @@ void RootDirectory::scan(std::string relpath) {
 	struct dirent **de;
 	std::string fullpath(root);
 	fullpath += "/";
-	fullpath += relpath;
+	if (relpath.size() > 0) {
+		fullpath += relpath;
+		fullpath += "/";
+	}
 	int n = scandirat(AT_FDCWD, fullpath.c_str(), &de, NULL, alphasort);
 	if (n == -1)
 		return;
@@ -31,6 +34,7 @@ void RootDirectory::scan(std::string relpath) {
 		if (de[n]->d_type == DT_REG) {
 			//regular file
 			std::string filename(de[n]->d_name);
+			fullpath += de[n]->d_name;
 			File *file = new File(root, relpath, filename);
 			std::cout << file->fullpath << std::endl;
 			AddFile(file);
@@ -44,11 +48,20 @@ void RootDirectory::AddFile(File *file) {
 
 	// insert into the inode table
 	filesbyinode.insert(std::pair(file->inode, file));
-	if (file->nlink > 1)
-		file->hardlink = true;
 
 	// insert into the size table
 	filesbysize.insert(std::pair(file->size, file));
+
+	// insert into relativepath table
+	std::string rp;
+	if (file->relpath.size() > 0) {
+		rp += file->relpath;
+		rp += "/";
+	}
+	rp += file->name;
+	filesbyrelativepath.insert(std::pair(rp, file));
+
+	/*
 	if ((filesbysize.count(file->size) > 1) && (!file->hardlink)) {
 		auto rp = filesbysize.equal_range(file->size); //range of files with same size
 		for(auto it = rp.first; it != rp.second; it++) {
@@ -58,12 +71,7 @@ void RootDirectory::AddFile(File *file) {
 				file->link(it->second); //make a hardlink
 		}
 	}
-
-	// insert into relativepath table
-	std::string p(file->relpath);
-	p += "/";
-	p += file->name;
-	filesbyrelativepath.insert(std::pair(p, file));
+	*/
 }
 
 

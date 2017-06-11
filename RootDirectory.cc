@@ -27,7 +27,6 @@ void RootDirectory::scan(std::string relpath) {
 			continue;
 
 		if (de[n]->d_type == DT_DIR) {
-			//continue; //XXX just testing for now don't descend the tree
 			//directory
 			scan(de[n]->d_name); //recurse
 		}
@@ -36,7 +35,6 @@ void RootDirectory::scan(std::string relpath) {
 			std::string filename(de[n]->d_name);
 			fullpath += de[n]->d_name;
 			File *file = new File(root, relpath, filename);
-			std::cout << file->fullpath << std::endl;
 			AddFile(file);
 		}
 	}
@@ -61,6 +59,7 @@ void RootDirectory::AddFile(File *file) {
 	rp += file->name;
 	filesbyrelativepath.insert(std::pair(rp, file));
 
+	// find identical files (candidates for hard linking)
 	/*
 	if ((filesbysize.count(file->size) > 1) && (!file->hardlink)) {
 		auto rp = filesbysize.equal_range(file->size); //range of files with same size

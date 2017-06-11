@@ -60,6 +60,16 @@ void RootDirectory::AddFile(File *file) {
 	filesbyrelativepath.insert(std::pair(rp, file));
 
 	// find identical files (candidates for hard linking)
+	for (RootDirectory *rd : rootdirectories) {
+		if (rd == this)
+			continue; //skip ourself
+		std::string relname(file->relpath);
+		if (relname.size() != 0)
+			relname	+= "/";
+		relname += file->name;
+		if (rd->filesbyrelativepath.at(relname) != NULL)
+			std::cout << this->root << " matches with " << rd->root <<std::endl;
+	}
 	/*
 	if ((filesbysize.count(file->size) > 1) && (!file->hardlink)) {
 		auto rp = filesbysize.equal_range(file->size); //range of files with same size

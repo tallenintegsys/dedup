@@ -24,7 +24,7 @@ void File::link(File* file) {
 	file->dup = true;//XXX this is for testing
 }
 
-bool File::equal(File &rhs) {
+bool File::operator==(File &rhs) {
 	if ((size == 0) || (rhs.size == 0))
 		return false; //ignore empty files
 

@@ -1,4 +1,5 @@
 #include "RootDirectory.h"
+#include <stdexcept>
 
 std::vector<RootDirectory*> RootDirectory::rootdirectories = std::vector<RootDirectory*>();
 
@@ -67,20 +68,21 @@ void RootDirectory::AddFile(File *file) {
 		if (relname.size() != 0)
 			relname	+= "/";
 		relname += file->name;
-		if (rd->filesbyrelativepath.at(relname) != NULL)
-			std::cout << this->root << " matches with " << rd->root <<std::endl;
-	}
-	/*
-	if ((filesbysize.count(file->size) > 1) && (!file->hardlink)) {
-		auto rp = filesbysize.equal_range(file->size); //range of files with same size
-		for(auto it = rp.first; it != rp.second; it++) {
-			if (file == it->second)
-				continue; //well, we don't want to link to ourselves
-			if (file->equal(*it->second))// find the other identically sized file(s)
-				file->link(it->second); //make a hardlink
+		if (rd->filesbyrelativepath.count(relname)) { //same name?
+			File *dfile = rd->filesbyrelativepath[relname];
+			if ((*file) == (*dfile))
+				std::cout << file->name << " = " << dfile->name << " are equal" << std::endl;
+			/*
+			if ((rd->filesbysize.count(file->size) > 1) && (!file->hardlink)) {
+				auto rp = rd->filesbysize.equal_range(file->size); //range of files with same size
+				for(auto it = rp.first; it != rp.second; it++) {
+					if (file == it->second)
+						continue; //well, we don't want to link to ourselves
+					if (file->equal(*it->second))// find the other identically sized file(s)
+						file->link(it->second); //make a hardlink
+						*/
 		}
 	}
-	*/
 }
 
 

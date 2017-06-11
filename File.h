@@ -38,7 +38,7 @@ class File {
 	   containers
 	 */
 	File(const std::string &, const std::string &, const std::string &);
-	bool equal (File &);
+	bool operator== (File &);
 	void link(File *);
 	bool isHardlink(File *);
 

@@ -70,12 +70,12 @@ void RootDirectory::AddFile(File *file) {
 		relname += file->name;
 		if (rd->filesbyrelativepath.count(relname)) { //same name?
 			File *dfile = rd->filesbyrelativepath[relname];
-			if ((*file) == (*dfile))
-				std::cout << file->name << std::endl;
+			if ((*file) == (*dfile)) {
 				std::cout << file->fullpath;
 				std::cout << " = ";
 				std::cout << dfile->fullpath;
 				std::cout << std::endl;
+			}
 		}
 	}
 }

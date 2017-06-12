@@ -71,16 +71,11 @@ void RootDirectory::AddFile(File *file) {
 		if (rd->filesbyrelativepath.count(relname)) { //same name?
 			File *dfile = rd->filesbyrelativepath[relname];
 			if ((*file) == (*dfile))
-				std::cout << file->name << " = " << dfile->name << " are equal" << std::endl;
-			/*
-			if ((rd->filesbysize.count(file->size) > 1) && (!file->hardlink)) {
-				auto rp = rd->filesbysize.equal_range(file->size); //range of files with same size
-				for(auto it = rp.first; it != rp.second; it++) {
-					if (file == it->second)
-						continue; //well, we don't want to link to ourselves
-					if (file->equal(*it->second))// find the other identically sized file(s)
-						file->link(it->second); //make a hardlink
-						*/
+				std::cout << file->name << std::endl;
+				std::cout << file->fullpath;
+				std::cout << " = ";
+				std::cout << dfile->fullpath;
+				std::cout << std::endl;
 		}
 	}
 }

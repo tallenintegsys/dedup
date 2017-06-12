@@ -44,14 +44,6 @@ int main(int argc, char **argv) {
 		new RootDirectory(std::string(argv[i]));
 	}
 
-	//XXX test code, print the stuff out
-	for (RootDirectory *rd : RootDirectory::rootdirectories) {
-		std::cout << rd->root << std::endl;
-//		rd->PrintByInode();
-//		rd->PrintBySize();
-		rd->PrintByRelativepath();
-	}
-
 	exit(EXIT_SUCCESS);
 }
 

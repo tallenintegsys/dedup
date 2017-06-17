@@ -43,6 +43,9 @@ int main(int argc, char **argv) {
 		//std::cout << argv[i] << std::endl;
 		new RootDirectory(std::string(argv[i]));
 	}
+	for (RootDirectory *rd :  RootDirectory::rootdirectories) {
+		rd->PrintByRelativepath();
+	}
 
 	exit(EXIT_SUCCESS);
 }

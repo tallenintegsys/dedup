@@ -1,5 +1,4 @@
 #include "RootDirectory.h"
-#include <stdexcept>
 
 std::vector<RootDirectory*> RootDirectory::rootdirectories = std::vector<RootDirectory*>();
 
@@ -20,8 +19,11 @@ void RootDirectory::scan(std::string relpath) {
 		fullpath += "/";
 	}
 	int n = scandirat(AT_FDCWD, fullpath.c_str(), &de, NULL, alphasort);
-	if (n == -1)
+	if (n < 0) {
+		std::cout << fullpath << "  ";
+		perror("scandirat");
 		return;
+	}
 
 	while(n--) {
 		if (!strcmp(de[n]->d_name, "..") || !strcmp(de[n]->d_name, "."))
@@ -46,10 +48,10 @@ void RootDirectory::scan(std::string relpath) {
 void RootDirectory::AddFile(File *file) {
 
 	// insert into the inode table
-	filesbyinode.insert(std::pair(file->inode, file));
+	filesbyinode.insert(std::pair<__ino_t, File*>(file->inode, file));
 
 	// insert into the size table
-	filesbysize.insert(std::pair(file->size, file));
+	filesbysize.insert(std::pair<size_t, File*>(file->size, file));
 
 	// insert into relativepath table
 	std::string rp;
@@ -58,7 +60,7 @@ void RootDirectory::AddFile(File *file) {
 		rp += "/";
 	}
 	rp += file->name;
-	filesbyrelativepath.insert(std::pair(rp, file));
+	filesbyrelativepath.insert(std::pair<std::string, File*>(rp, file));
 
 	// find identical files (candidates for hard linking)
 	for (RootDirectory *rd : rootdirectories) {

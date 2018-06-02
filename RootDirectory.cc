@@ -119,7 +119,10 @@ void RootDirectory::PrintBySize (void) {
 	std::cout << std::endl << "By size:"<< std::left << std::endl;
 	for (auto pf : filesbysize) {
 		auto f = pf.second;
-		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::setw(40) << f->name.substr(0,35) << "\t" ;
+		std::cout<<std::setw(10) << f->inode \
+				<< std::setw(10) << f->size \
+				<< std::setw(40) << f->name.substr(0,35) \
+				<< "\t" ;
 		if (f->sha) {
 			for(int i = 0; i < 64 ; i++) {
 				if (i==10) {
@@ -141,7 +144,10 @@ void RootDirectory::PrintByRelativepath (void) {
 	std::cout << std::endl << "By relative path:"<< std::left << std::endl;
 	for (auto pf : filesbyrelativepath) {
 		auto f = pf.second;
-		std::cout<<std::setw(30) << pf.first << std::setw(10) << f->size << std::setw(40) << f->name.substr(0,35) << "\t" ;
+		std::cout<<std::setw(30) << pf.first \
+				<< std::setw(10) << f->size \
+				<< std::setw(40) << f->name.substr(0,35) \
+				<< "\t" ;
 		if (f->sha) {
 			for(int i = 0; i < 64 ; i++) {
 				if (i==10) {

@@ -9,10 +9,6 @@ File::File(const std::string &root, const std::string &relpath, const std::strin
 		this->fullpath += std::string("/") += relpath;
 	this->fullpath += std::string("/") += name;
 	struct stat sb;
-	std::cout << "root: " << root \
-			<< "  relpath: " << relpath \
-			<< "  name: " << name << "\n";
-
 	if (stat(fullpath.c_str(), &sb) == -1) {
 		perror("stat");
 		exit(EXIT_FAILURE);
@@ -74,7 +70,7 @@ void File::calc_sha() {
 		exit(EXIT_FAILURE);
 	}
 
-	mdctx = EVP_MD_CTX_create(); //XXX make sure this stuff is Kosher
+	mdctx = EVP_MD_CTX_create();
 	EVP_DigestInit_ex(mdctx, md, NULL);
 	EVP_DigestUpdate(mdctx, file_buffer, strlen(file_buffer));
 	EVP_DigestFinal_ex(mdctx, md_value, &md_len);

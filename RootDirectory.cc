@@ -93,7 +93,10 @@ void RootDirectory::PrintByInode (void) {
 			std::cout << "D";
 
 		std::cout << " \t";
-		std::cout<<std::setw(10) << f->inode << std::setw(10) << f->size << std::setw(40) << f->name.substr(0,35) << "\t" ;
+		std::cout<<std::setw(10) << f->inode \
+				<< std::setw(10) << f->size \
+				<< std::setw(40) << f->name.substr(0,35) \
+				<< "\t" ;
 		if (f->sha) {
 			for(int i = 0; i < 64 ; i++) {
 				if (i==10) {

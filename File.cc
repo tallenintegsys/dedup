@@ -9,6 +9,9 @@ File::File(const std::string &root, const std::string &relpath, const std::strin
 		this->fullpath += std::string("/") += relpath;
 	this->fullpath += std::string("/") += name;
 	struct stat sb;
+	std::cout << "root: " << root \
+			<< "  relpath: " << relpath \
+			<< "  name: " << name << "\n";
 
 	if (stat(fullpath.c_str(), &sb) == -1) {
 		perror("stat");

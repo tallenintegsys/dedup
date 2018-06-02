@@ -1,4 +1,9 @@
 #include "RootDirectory.h"
+#include <dirent.h>
+#include <unistd.h>
+#include <string.h>
+#include <iostream>
+#include <iomanip>
 
 std::vector<RootDirectory*> RootDirectory::rootdirectories = std::vector<RootDirectory*>();
 
@@ -8,7 +13,6 @@ RootDirectory::RootDirectory(const std::string &root) {
 	this->root = (root[root.size()-1] == '/') ? root.substr(0,root.size()-1) : root;
 	scan("");
 }
-
 
 void RootDirectory::scan(std::string relpath) {
 	struct dirent **de;
@@ -24,7 +28,6 @@ void RootDirectory::scan(std::string relpath) {
 		perror("scandirat");
 		return;
 	}
-
 	while(n--) {
 		if (!strcmp(de[n]->d_name, "..") || !strcmp(de[n]->d_name, "."))
 			continue;
@@ -43,7 +46,6 @@ void RootDirectory::scan(std::string relpath) {
 	}
 	free(de);
 }
-
 
 void RootDirectory::AddFile(File *file) {
 
@@ -82,7 +84,6 @@ void RootDirectory::AddFile(File *file) {
 	}
 }
 
-
 void RootDirectory::PrintByInode (void) {
 	std::cout << "By inode:"<< std::left << std::endl;
 	for (auto pf : filesbyinode) {
@@ -114,7 +115,6 @@ void RootDirectory::PrintByInode (void) {
 	std::cout << std::right << std::endl;
 }
 
-
 void RootDirectory::PrintBySize (void) {
 	std::cout << std::endl << "By size:"<< std::left << std::endl;
 	for (auto pf : filesbysize) {
@@ -137,7 +137,6 @@ void RootDirectory::PrintBySize (void) {
 	std::cout << std::right << std::endl;
 }
 
-
 void RootDirectory::PrintByRelativepath (void) {
 	std::cout << std::endl << "By relative path:"<< std::left << std::endl;
 	for (auto pf : filesbyrelativepath) {
@@ -159,7 +158,6 @@ void RootDirectory::PrintByRelativepath (void) {
 	}
 	std::cout << std::right << std::endl;
 }
-
 
 RootDirectory::~RootDirectory() {
 	for (auto it = filesbysize.begin(); it != filesbysize.end(); it ++)

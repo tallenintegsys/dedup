@@ -1,4 +1,4 @@
-CXXFLAGS= -g --std=c++1z
+CXXFLAGS= -g --std=c++17
 
 
 dedup: dedup.o File.o RootDirectory.o
@@ -16,3 +16,6 @@ clean:
 valgrind: dedup
 	valgrind --leak-check=full ./dedup testfiles/
 
+.PHONY: tags
+tags:
+	ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .

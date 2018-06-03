@@ -28,14 +28,19 @@ bool File::operator==(File &rhs) {
 	if ((size == 0) || (rhs.size == 0)) {
 		return false; //	ignore empty files
 	}
-	if (size == rhs.size) {
+	if (size == rhs.size) { //    check the size first shas are computationally expensive
 		if (sha == NULL) {
 			calc_sha();
 		}
 		if (rhs.sha == NULL) {
 			rhs.calc_sha();
 		}
-		return memcmp(sha, rhs.sha, EVP_MAX_MD_SIZE) == 0;
+		if (memcmp(sha, rhs.sha, EVP_MAX_MD_SIZE) == 0) {
+				std::cout << name << " = " << rhs.name << "\n";
+			return true;
+		} else {
+			return false;
+		}
 	}
 	return false;
 }

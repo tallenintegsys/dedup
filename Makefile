@@ -16,6 +16,11 @@ clean:
 valgrind: dedup
 	valgrind --leak-check=full ./dedup testfiles/
 
-.PHONY: tags
+.PHONY: tags beautify
+
+beautify:
+	clang-format -style=file -i *.cc
+	clang-format -style=file -i *.h
+
 tags:
 	ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .

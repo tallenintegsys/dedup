@@ -5,8 +5,9 @@ File::File(const std::string &root, const std::string &relpath, const std::strin
 	this->relpath = relpath;
 	this->name = name;
 	this->fullpath += root;
-	if (relpath.size() > 0)
+	if (relpath.size() > 0) {
 		this->fullpath += std::string("/") += relpath;
+	}
 	this->fullpath += std::string("/") += name;
 	struct stat sb;
 	if (stat(fullpath.c_str(), &sb) == -1) {
@@ -18,20 +19,22 @@ File::File(const std::string &root, const std::string &relpath, const std::strin
 	nlink = sb.st_nlink;
 }
 
-void File::link(File* file) {
+void File::link(File *file) {
 	dup = true;
-	file->dup = true;//XXX this is for testing
+	file->dup = true; //	XXX this is for testing
 }
 
 bool File::operator==(File &rhs) {
-	if ((size == 0) || (rhs.size == 0))
-		return false; //ignore empty files
-
+	if ((size == 0) || (rhs.size == 0)) {
+		return false; //	ignore empty files
+	}
 	if (size == rhs.size) {
-		if (sha	== NULL)
+		if (sha == NULL) {
 			calc_sha();
-		if (rhs.sha == NULL)
+		}
+		if (rhs.sha == NULL) {
 			rhs.calc_sha();
+		}
 		return memcmp(sha, rhs.sha, EVP_MAX_MD_SIZE) == 0;
 	}
 	return false;
@@ -42,9 +45,9 @@ void File::calc_sha() {
 	const EVP_MD *md;
 	char *file_buffer;
 	unsigned int md_len;
-	unsigned char *md_value = new unsigned char [EVP_MAX_MD_SIZE];
+	unsigned char *md_value = new unsigned char[EVP_MAX_MD_SIZE];
 
-	if (size == 0) { //this can happen
+	if (size == 0) { //	this can happen
 		delete[] md_value;
 		return;
 	}
@@ -53,13 +56,13 @@ void File::calc_sha() {
 
 	md = EVP_get_digestbyname("sha512");
 
-	if(!md) {
+	if (!md) {
 		printf("Unknown message digest \n");
 		exit(EXIT_FAILURE);
 	}
 
 	int file_descript = open(fullpath.c_str(), O_RDONLY);
-	if(file_descript < 0) {
+	if (file_descript < 0) {
 		perror("open for sha");
 		exit(EXIT_FAILURE);
 	}

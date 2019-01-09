@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-class RootDirectory {
+class DirectoryTree {
 	std::multimap<__ino_t, File *> filesbyinode;
 	std::multimap<fsize_t, File *> filesbysize;
 	std::map<std::string, File *> filesbyrelativepath;
@@ -14,12 +14,13 @@ class RootDirectory {
 	public:
 	std::string root;
 	int id;
-	static std::vector<RootDirectory *> rootdirectories;
+	static std::vector<DirectoryTree *> trees;
+
 	//! build a directory tree starting at path
 	/*!
 			Contains multimaps of all files by inode and size
 	*/
-	RootDirectory(const std::string &path);
+	DirectoryTree(const std::string &path);
 
 	//! Print all Files by inode
 	/*!
@@ -43,5 +44,5 @@ class RootDirectory {
 	/*!
 			smart pointers would obviate this
 	*/
-	~RootDirectory();
+	~DirectoryTree();
 };

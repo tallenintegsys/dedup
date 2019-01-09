@@ -1,20 +1,20 @@
-#include "RootDirectory.h"
+#include "DirectoryTree.h"
 #include <dirent.h>
 #include <iomanip>
 #include <iostream>
 #include <string.h>
 #include <unistd.h>
 
-std::vector<RootDirectory *> RootDirectory::rootdirectories = std::vector<RootDirectory *>();
+std::vector<DirectoryTree *> DirectoryTree::trees = std::vector<DirectoryTree *>();
 
-RootDirectory::RootDirectory(const std::string &root) {
-	rootdirectories.push_back(this);
-	this->id = rootdirectories.size();
+DirectoryTree::DirectoryTree(const std::string &root) {
+	trees.push_back(this);
+	this->id = trees.size();
 	this->root = (root[root.size() - 1] == '/') ? root.substr(0, root.size() - 1) : root;
 	scan("");
 }
 
-void RootDirectory::scan(std::string relpath) {
+void DirectoryTree::scan(std::string relpath) {
 	struct dirent **de;
 	std::string fullpath(root);
 	fullpath += "/";
@@ -47,7 +47,7 @@ void RootDirectory::scan(std::string relpath) {
 	free(de);
 }
 
-void RootDirectory::AddFile(File *file) {
+void DirectoryTree::AddFile(File *file) {
 
 	// insert into the inode table
 	filesbyinode.insert(std::pair<__ino_t, File *>(file->inode, file));
@@ -65,7 +65,7 @@ void RootDirectory::AddFile(File *file) {
 	filesbyrelativepath.insert(std::pair<std::string, File *>(rp, file));
 
 	// find identical files (candidates for hard linking)
-	for (RootDirectory *rd : rootdirectories) {
+	for (DirectoryTree *rd : trees) {
 		if (rd == this)
 			continue; //	skip ourself
 		std::string relname(file->relpath);
@@ -84,7 +84,7 @@ void RootDirectory::AddFile(File *file) {
 	}
 }
 
-void RootDirectory::PrintByInode(void) {
+void DirectoryTree::PrintByInode(void) {
 	std::cout << "By inode:" << std::left << std::endl;
 	for (auto pf : filesbyinode) {
 		File *f = pf.second;
@@ -111,7 +111,7 @@ void RootDirectory::PrintByInode(void) {
 	std::cout << std::right << std::endl;
 }
 
-void RootDirectory::PrintBySize(void) {
+void DirectoryTree::PrintBySize(void) {
 	std::cout << std::endl << "By size:" << std::left << std::endl;
 	for (auto pf : filesbysize) {
 		auto f = pf.second;
@@ -133,7 +133,7 @@ void RootDirectory::PrintBySize(void) {
 	std::cout << std::right << std::endl;
 }
 
-void RootDirectory::PrintByRelativepath(void) {
+void DirectoryTree::PrintByRelativepath(void) {
 	std::cout << std::endl << "By relative path:" << std::left << std::endl;
 	for (auto pf : filesbyrelativepath) {
 		auto f = pf.second;
@@ -150,7 +150,7 @@ void RootDirectory::PrintByRelativepath(void) {
 	std::cout << std::right << std::endl;
 }
 
-RootDirectory::~RootDirectory() {
+DirectoryTree::~DirectoryTree() {
 	for (auto it = filesbysize.begin(); it != filesbysize.end(); it++)
 		delete (*it).second;
 }

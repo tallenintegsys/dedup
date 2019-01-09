@@ -1,14 +1,14 @@
 CXXFLAGS= -g --std=c++17
 
 
-dedup: dedup.o File.o RootDirectory.o
+dedup: dedup.o File.o DirectoryTree.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lssl -lcrypto
 
 dedup.o: dedup.cc
 
 File.o: File.cc File.h
 
-RootDirectory.o: RootDirectory.cc RootDirectory.h
+DirectoryTree.o: DirectoryTree.cc DirectoryTree.h
 
 clean:
 	rm -f dedup *.o

@@ -1,4 +1,4 @@
-#include "RootDirectory.h"
+#include "DirectoryTree.h"
 #include <getopt.h>
 #include <string>
 #include <unistd.h>
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 	}
 	for (int i = optind; i < argc; i++) {
 		// std::cout << argv[i] << std::endl;
-		new RootDirectory(std::string(argv[i]));
+		new DirectoryTree(std::string(argv[i]));
 	}
 	exit(EXIT_SUCCESS);
 }

@@ -12,9 +12,9 @@ class DirectoryTree {
 	void AddFile(File *file);
 
 	public:
-	std::string root;
-	int id;
-	static std::vector<DirectoryTree *> trees;
+	std::string root; //!< Base or "root" of this directory tree
+	int id; //!< Just a unique id starting with 1
+	static std::vector<DirectoryTree *> trees; //! A static member so DTs can manipulate eachother
 
 	//! build a directory tree starting at path
 	/*!

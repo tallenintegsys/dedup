@@ -9,7 +9,7 @@ std::vector<DirectoryTree *> DirectoryTree::trees = std::vector<DirectoryTree *>
 
 DirectoryTree::DirectoryTree(const std::string &root) {
 	trees.push_back(this);
-	this->id = trees.size();
+	this->id = trees.size();//e.g. 1, 2, 3..n
 	this->root = (root[root.size() - 1] == '/') ? root.substr(0, root.size() - 1) : root;
 	scan("");
 }

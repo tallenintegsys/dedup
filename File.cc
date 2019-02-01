@@ -1,10 +1,8 @@
 #include "File.h"
 
 File::File(const std::string &name) {
-	std::cout << "name: " << name << "   ";
 	this->name = name;
 	this->relname = name.substr(name.find_first_of("/")+1);
-	std::cout << "relname: " << relname << "\n";
 	struct stat sb;
 	if (stat(name.c_str(), &sb) == -1) {
 		std::cout << name << std::endl;

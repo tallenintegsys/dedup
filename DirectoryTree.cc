@@ -8,16 +8,17 @@
 std::vector<DirectoryTree *> DirectoryTree::trees = std::vector<DirectoryTree *>();
 
 DirectoryTree::DirectoryTree(const std::string &root) {
-	std::cout << "root: " << root << "     ";
+	std::cout << root << "\n";
 	trees.push_back(this);
 	this->id = trees.size();//e.g. 1, 2, 3..n
-	this->root = (root[root.size() - 1] == '/') ? root.substr(0, root.size() - 1) : root;
-	std::cout << "this->root: " << this->root << "\n";
+	this->root = (root[root.size() - 1] == '/') ? root.substr(0, root.size() - 2) : root;
 	scan();
 }
 
 void DirectoryTree::scan(std::string path) {
-	std::cout << " inode         size      hlnk  relname                                name \n";
+	if (path[0] == '/')
+		path = path.substr(1);
+	std::cout << " inode         size      hlnk  relpath                                path \n";
 	struct dirent **de;
 	int n = scandirat(AT_FDCWD, (this->root+"/"+path).c_str(), &de, NULL, alphasort);
 	if (n < 0) {
@@ -32,12 +33,20 @@ void DirectoryTree::scan(std::string path) {
 		if (de[n]->d_type == DT_DIR) {
 			//	directory
 			std::string dirname(de[n]->d_name);
+			std::cout << root;
+			if (!path.empty())
+				std::cout << "/"+path;
+			std::cout << "/"+dirname << "\n";
 			scan(path+"/"+dirname); //	recurse
 		}
 		if (de[n]->d_type == DT_REG) {
 		//	regular file
-			std::string filename(de[n]->d_name);
-			File *file = new File(root+"/"+path+"/"+filename);
+			std::string fp;
+			if (path.empty())
+				fp = root+"/"+de[n]->d_name;
+			else
+				fp = root+"/"+path+"/"+de[n]->d_name;
+			File *file = new File(fp);
 			std::cout << *file << "\n";
 			AddFile(file);
 		}

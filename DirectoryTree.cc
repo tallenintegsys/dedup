@@ -12,21 +12,16 @@ DirectoryTree::DirectoryTree(const std::string &root) {
 	trees.push_back(this);
 	this->id = trees.size();//e.g. 1, 2, 3..n
 	this->root = (root[root.size() - 1] == '/') ? root.substr(0, root.size() - 1) : root;
-	std::cout << "this->root: " << this->root << std::endl;
+	std::cout << "this->root: " << this->root << "\n";
 	scan();
 }
 
 void DirectoryTree::scan(std::string path) {
-	if (path[path.size() -1] != '/')
-		path = root + std::string("/") + path;
-	else
-		path = root + path;
-	std::cout << "path: " << path << "\n";
 	std::cout << " inode         size      hlnk  relname                                name \n";
 	struct dirent **de;
-	int n = scandirat(AT_FDCWD, path.c_str(), &de, NULL, alphasort);
+	int n = scandirat(AT_FDCWD, (this->root+"/"+path).c_str(), &de, NULL, alphasort);
 	if (n < 0) {
-		std::cout << path << "  ";
+		std::cout << path << "  \n";
 		perror("scandirat");
 		return;
 	}
@@ -37,13 +32,13 @@ void DirectoryTree::scan(std::string path) {
 		if (de[n]->d_type == DT_DIR) {
 			//	directory
 			std::string dirname(de[n]->d_name);
-			scan(dirname); //	recurse
+			scan(path+"/"+dirname); //	recurse
 		}
 		if (de[n]->d_type == DT_REG) {
-			//	regular file
+		//	regular file
 			std::string filename(de[n]->d_name);
-			File *file = new File(path+std::string("/")+filename);
-			std::cout << *file << std::endl;
+			File *file = new File(root+"/"+path+"/"+filename);
+			std::cout << *file << "\n";
 			AddFile(file);
 		}
 	}

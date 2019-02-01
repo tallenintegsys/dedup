@@ -21,14 +21,11 @@ typedef off_t fsize_t;
 class File {
 	public:
 	__ino_t inode;
-	std::string root;
-	std::string relpath;
 	std::string name;
-	std::string fullpath;
+	std::string relname;
 	fsize_t size;
 	unsigned char *sha = NULL; /*!< SHA512 for the file */
-	bool hardlink = false;     /*!< it's alread a hardlink */
-	nlink_t nlink = 0;
+	int hardlinks = 0;
 	bool dup = false; //	XXX testing
 
 	//! populates various variables
@@ -37,11 +34,13 @@ class File {
 			size. adds an entry to the inode and size lookup
 			containers
 	*/
-	File(const std::string &, const std::string &, const std::string &);
+	File(const std::string &);
 	bool operator==(File &);
 	void link(File *);
 	bool isHardlink(File *);
 
 	private:
 	void calc_sha();
+
+	friend std::ostream& operator<<(std::ostream &, const File &);
 };

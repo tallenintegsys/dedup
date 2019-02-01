@@ -1,22 +1,17 @@
 #include "File.h"
 
-File::File(const std::string &root, const std::string &relpath, const std::string &name) {
-	this->root = root;
-	this->relpath = relpath;
+File::File(const std::string &name) {
 	this->name = name;
-	this->fullpath += root;
-	if (relpath.size() > 0) {
-		this->fullpath += std::string("/") += relpath;
-	}
-	this->fullpath += std::string("/") += name;
+	this->relname = name.substr(name.find_first_of("/")+1);
 	struct stat sb;
-	if (stat(fullpath.c_str(), &sb) == -1) {
+	if (stat(name.c_str(), &sb) == -1) {
+		std::cout << name << std::endl;
 		perror("stat");
 		exit(EXIT_FAILURE);
 	}
 	inode = sb.st_ino;
 	size = sb.st_size;
-	nlink = sb.st_nlink;
+	hardlinks = sb.st_nlink;
 }
 
 void File::link(File *file) {
@@ -61,7 +56,7 @@ void File::calc_sha() {
 		exit(EXIT_FAILURE);
 	}
 
-	int file_descript = open(fullpath.c_str(), O_RDONLY);
+	int file_descript = open(name.c_str(), O_RDONLY);
 	if (file_descript < 0) {
 		perror("open for sha");
 		exit(EXIT_FAILURE);
@@ -89,4 +84,15 @@ void File::calc_sha() {
 
 bool File::isHardlink(File *file) {
 	return file->inode == this->inode;
+}
+
+std::ostream& operator<<(std::ostream &os, const File &rhs) {
+	os << "File: ";
+	os << "inode :" << rhs.inode;
+	os << "   name: " << rhs.name;
+	os << "   relname: " << rhs.relname;
+	os << "   size: " << rhs.size;
+	os << "   hrdlinks: " << rhs.hardlinks;
+	os << std::endl; 
+	return os;
 }

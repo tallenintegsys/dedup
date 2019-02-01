@@ -8,7 +8,7 @@ class DirectoryTree {
 	std::multimap<fsize_t, File *> filesbysize;
 	std::map<std::string, File *> filesbyrelativepath;
 
-	void scan(std::string path);
+	void scan(std::string = "");
 	void AddFile(File *file);
 
 	public:

@@ -8,23 +8,24 @@
 std::vector<DirectoryTree *> DirectoryTree::trees = std::vector<DirectoryTree *>();
 
 DirectoryTree::DirectoryTree(const std::string &root) {
+	std::cout << "root: " << root << "     ";
 	trees.push_back(this);
 	this->id = trees.size();//e.g. 1, 2, 3..n
 	this->root = (root[root.size() - 1] == '/') ? root.substr(0, root.size() - 1) : root;
-	scan("");
+	std::cout << "this->root: " << this->root << std::endl;
+	scan();
 }
 
-void DirectoryTree::scan(std::string relpath) {
+void DirectoryTree::scan(std::string path) {
+	if (path[path.size() -1] != '/')
+		path = root + std::string("/") + path;
+	else
+		path = root + path;
+	std::cout << "path: " << path << std::endl;
 	struct dirent **de;
-	std::string fullpath(root);
-	fullpath += "/";
-	if (relpath.size() > 0) {
-		fullpath += relpath;
-		fullpath += "/";
-	}
-	int n = scandirat(AT_FDCWD, fullpath.c_str(), &de, NULL, alphasort);
+	int n = scandirat(AT_FDCWD, path.c_str(), &de, NULL, alphasort);
 	if (n < 0) {
-		std::cout << fullpath << "  ";
+		std::cout << path << "  ";
 		perror("scandirat");
 		return;
 	}
@@ -34,13 +35,15 @@ void DirectoryTree::scan(std::string relpath) {
 
 		if (de[n]->d_type == DT_DIR) {
 			//	directory
-			scan(de[n]->d_name); //	recurse
+			std::string dirname(de[n]->d_name);
+			scan(dirname); //	recurse
 		}
 		if (de[n]->d_type == DT_REG) {
 			//	regular file
 			std::string filename(de[n]->d_name);
-			fullpath += de[n]->d_name;
-			File *file = new File(root, relpath, filename);
+			File *file = new File(path+std::string("/")+filename);
+			std::cout << "File: ";
+			std::cout << *file << std::endl;
 			AddFile(file);
 		}
 	}
@@ -56,28 +59,18 @@ void DirectoryTree::AddFile(File *file) {
 	filesbysize.insert(std::pair<size_t, File *>(file->size, file));
 
 	// insert into relativepath table
-	std::string rp;
-	if (file->relpath.size() > 0) {
-		rp += file->relpath;
-		rp += "/";
-	}
-	rp += file->name;
-	filesbyrelativepath.insert(std::pair<std::string, File *>(rp, file));
+	filesbyrelativepath.insert(std::pair<std::string, File *>(file->name, file));
 
-	// find identical files (candidates for hard linking)
-	for (DirectoryTree *rd : trees) {
-		if (rd == this)
-			continue; //	skip ourself
-		std::string relname(file->relpath);
-		if (relname.size() != 0)
-			relname += "/";
-		relname += file->name;
-		if (rd->filesbyrelativepath.count(relname)) { //	same name?
-			File *dfile = rd->filesbyrelativepath[relname];
+	// spin through the other DTs, find identical files (candidates for hard linking)
+	for (DirectoryTree *dt : trees) {
+		if (dt == this)
+			continue; // skip ourself
+		if (dt->filesbyrelativepath.count(file->name)) { // same name?
+			File *dfile = dt->filesbyrelativepath[file->name];
 			if ((*file) == (*dfile)) {
-				std::cout << file->fullpath;
+				std::cout << file->name;
 				std::cout << " = ";
-				std::cout << dfile->fullpath;
+				std::cout << dfile->name;
 				std::cout << std::endl;
 			}
 		}
@@ -88,7 +81,7 @@ void DirectoryTree::PrintByInode(void) {
 	std::cout << "By inode:" << std::left << std::endl;
 	for (auto pf : filesbyinode) {
 		File *f = pf.second;
-		if (f->hardlink)
+		if (f->hardlinks)
 			std::cout << "H";
 		if (f->dup)
 			std::cout << "D";

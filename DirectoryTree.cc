@@ -21,7 +21,8 @@ void DirectoryTree::scan(std::string path) {
 		path = root + std::string("/") + path;
 	else
 		path = root + path;
-	std::cout << "path: " << path << std::endl;
+	std::cout << "path: " << path << "\n";
+	std::cout << " inode         size      hlnk  relname                                name \n";
 	struct dirent **de;
 	int n = scandirat(AT_FDCWD, path.c_str(), &de, NULL, alphasort);
 	if (n < 0) {
@@ -42,7 +43,6 @@ void DirectoryTree::scan(std::string path) {
 			//	regular file
 			std::string filename(de[n]->d_name);
 			File *file = new File(path+std::string("/")+filename);
-			std::cout << "File: ";
 			std::cout << *file << std::endl;
 			AddFile(file);
 		}

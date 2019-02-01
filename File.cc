@@ -87,12 +87,10 @@ bool File::isHardlink(File *file) {
 }
 
 std::ostream& operator<<(std::ostream &os, const File &rhs) {
-	os << "File: ";
-	os << "inode :" << rhs.inode;
-	os << "   name: " << rhs.name;
-	os << "   relname: " << rhs.relname;
-	os << "   size: " << rhs.size;
-	os << "   hrdlinks: " << rhs.hardlinks;
-	os << std::endl; 
+	os << "\r\e[00C" << rhs.inode;
+	os << "\r\e[15C" << rhs.size;
+	os << "\r\e[25C" << rhs.hardlinks;
+	os << "\r\e[31C" << rhs.relname;
+	os << "\r\e[70C" << rhs.name;
 	return os;
 }

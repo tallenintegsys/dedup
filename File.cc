@@ -2,7 +2,7 @@
 
 File::File(const std::string &name) {
 	this->name = name;
-	this->relname = name.substr(name.find_first_of("/")+1);
+	this->relname = name.substr(name.find_first_of("/") + 1);
 	struct stat sb;
 	if (stat(name.c_str(), &sb) == -1) {
 		std::cout << name << std::endl;
@@ -23,7 +23,7 @@ bool File::operator==(File &rhs) {
 	if ((size == 0) || (rhs.size == 0)) {
 		return false; //	ignore empty files
 	}
-	if (size == rhs.size) { 
+	if (size == rhs.size) {
 		if (sha == NULL) {
 			calc_sha();
 		}
@@ -86,7 +86,7 @@ bool File::isHardlink(File *file) {
 	return file->inode == this->inode;
 }
 
-std::ostream& operator<<(std::ostream &os, const File &rhs) {
+std::ostream &operator<<(std::ostream &os, const File &rhs) {
 	os << "\r\e[00C" << rhs.inode;
 	os << "\r\e[15C" << rhs.size;
 	os << "\r\e[25C" << rhs.hardlinks;

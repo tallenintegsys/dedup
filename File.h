@@ -42,5 +42,5 @@ class File {
 	private:
 	void calc_sha();
 
-	friend std::ostream& operator<<(std::ostream &, const File &);
+	friend std::ostream &operator<<(std::ostream &, const File &);
 };

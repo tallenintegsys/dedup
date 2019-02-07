@@ -19,7 +19,7 @@ void File::link(File *file) {
 	file->dup = true; //	XXX this is for testing
 }
 
-bool File::operator==(File &rhs) {
+auto File::operator==(File &rhs) -> bool {
 	if ((size == 0) || (rhs.size == 0)) {
 		return false; //	ignore empty files
 	}
@@ -82,11 +82,11 @@ void File::calc_sha() {
 	return;
 };
 
-bool File::isHardlink(File *file) {
+auto File::isHardlink(File *file) -> bool {
 	return file->inode == this->inode;
 }
 
-std::ostream &operator<<(std::ostream &os, const File &rhs) {
+auto operator<<(std::ostream &os, const File &rhs) -> std::ostream & {
 	os << "\r\e[00C" << rhs.inode;
 	os << "\r\e[15C" << rhs.size;
 	os << "\r\e[25C" << rhs.hardlinks;

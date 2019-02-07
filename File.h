@@ -35,12 +35,12 @@ class File {
 			containers
 	*/
 	File(const std::string &);
-	bool operator==(File &);
+	auto operator==(File &) -> bool;
 	void link(File *);
-	bool isHardlink(File *);
+	auto isHardlink(File *) -> bool;
 
 	private:
 	void calc_sha();
 
-	friend std::ostream &operator<<(std::ostream &, const File &);
+	friend auto operator<<(std::ostream &, const File &) -> std::ostream &;
 };

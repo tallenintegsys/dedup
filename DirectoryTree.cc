@@ -18,7 +18,7 @@ DirectoryTree::DirectoryTree(const std::string &root) {
 void DirectoryTree::scan(std::string path) {
 	if (path[0] == '/')
 		path = path.substr(1);
-	std::cout << " inode         size      hlnk  relpath                                path \n";
+	//	std::cout << " inode         size      hlnk  relpath                                path \n";
 	struct dirent **de;
 	int n = scandirat(AT_FDCWD, (this->root + "/" + path).c_str(), &de, NULL, alphasort);
 	if (n < 0) {
@@ -47,8 +47,8 @@ void DirectoryTree::scan(std::string path) {
 			else
 				fp = root + "/" + path + "/" + de[n]->d_name;
 			File *file = new File(fp);
-			std::cout << *file << "\n";
-			AddFile(file);
+			//	std::cout << *file << "\n";
+			AddFile(file); //	add it to the list(s)
 		}
 	}
 	free(de);
@@ -63,14 +63,16 @@ void DirectoryTree::AddFile(File *file) {
 	filesbysize.insert(std::pair<size_t, File *>(file->size, file));
 
 	// insert into relativepath table
-	filesbyrelativepath.insert(std::pair<std::string, File *>(file->name, file));
+	filesbyrelativepath.insert(std::pair<std::string, File *>(file->subname, file));
 
-	// spin through the other DTs, find identical files (candidates for hard linking)
+	std::cout << file->name << "\n";
+
+	// spin through the other directorie trees for candidates for hard linking
 	for (DirectoryTree *dt : trees) {
 		if (dt == this)
-			continue;                                       // skip ourself
-		if (dt->filesbyrelativepath.count(file->name)) { // same name?
-			File *dfile = dt->filesbyrelativepath[file->name];
+			continue;                                          // skip our directory tree
+		if (dt->filesbyrelativepath.count(file->subname)) { // same name?
+			File *dfile = dt->filesbyrelativepath[file->subname];
 			if ((*file) == (*dfile)) {
 				std::cout << file->name;
 				std::cout << " = ";

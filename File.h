@@ -23,6 +23,7 @@ class File {
 	__ino_t inode;
 	std::string name;
 	std::string relname;
+	std::string subname; //	XXX I don't know what to call this yet
 	fsize_t size;
 	unsigned char *sha = NULL; /*!< SHA512 for the file */
 	int hardlinks = 0;

@@ -3,6 +3,7 @@
 File::File(const std::string &name) {
 	this->name = name;
 	this->relname = name.substr(name.find_first_of("/") + 1);
+	this->subname = relname.substr(relname.find_first_of("/") + 1);
 	struct stat sb;
 	if (stat(name.c_str(), &sb) == -1) {
 		std::cout << name << std::endl;

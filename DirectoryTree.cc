@@ -70,8 +70,15 @@ void DirectoryTree::AddFile(File *file) {
 	// spin through the other directorie trees for candidates for hard linking
 	for (DirectoryTree *dt : trees) {
 		if (dt == this)
-			continue;                                          // skip our directory tree
-		if (dt->filesbyrelativepath.count(file->subname)) { // same name?
+			continue; // skip our directory tree
+
+		if (dt->filesbyrelativepath.find(file->subname) != dt->filesbyrelativepath.end()) { // they have the same name
+			File *foundfile = dt->filesbyrelativepath.find(file->subname)->second;
+			if (foundfile->inode == file->inode) {
+				std::cout << *file << std::endl;
+				std::cout << *foundfile << std::endl;
+				continue; //	they are already hard linked
+			}
 			File *dfile = dt->filesbyrelativepath[file->subname];
 			if ((*file) == (*dfile)) {
 				std::cout << file->name;

@@ -28,15 +28,16 @@ class File {
 	unsigned char *sha = NULL; /*!< SHA512 for the file */
 	int hardlinks = 0;
 	bool dup = false; //	XXX testing
+	enum equality { no = 0b0000, yes = 0b0001, hardlink = 0b0010 };
 
 	//! populates various variables
 	/*!
-			Always populated inode, name, relativepath, and
-			size. adds an entry to the inode and size lookup
+			Always populate inode, name, relativepath, and
+			size. Add an entry to the inode and size lookup
 			containers
 	*/
 	File(const std::string &);
-	auto operator==(File &) -> bool;
+	auto operator==(File &) -> int;
 	void link(File *);
 	auto isHardlink(File *) -> bool;
 

@@ -20,20 +20,24 @@ void File::link(File *file) {
 	file->dup = true; //	XXX this is for testing
 }
 
-auto File::operator==(File &rhs) -> bool {
+auto File::operator==(File &rhs) -> int {
 	if ((size == 0) || (rhs.size == 0)) {
-		return false; //	ignore empty files
+		return equality::no; //	ignore empty files
 	}
-	if (size == rhs.size) {
+	File *foundfile;
+	//	check inode first, it computationally cheaper
+	if (rhs.inode == this->inode)
+		return equality::hardlink;
+	if (size == rhs.size) { //	compare size
 		if (sha == NULL) {
 			calc_sha();
 		}
 		if (rhs.sha == NULL) {
 			rhs.calc_sha();
 		}
-		return memcmp(sha, rhs.sha, EVP_MAX_MD_SIZE) == 0;
+		return memcmp(sha, rhs.sha, EVP_MAX_MD_SIZE) ? equality::no : equality::yes;
 	}
-	return false; //	different sizes
+	return equality::no; //	different sizes
 }
 
 void File::calc_sha() {
@@ -88,10 +92,11 @@ auto File::isHardlink(File *file) -> bool {
 }
 
 auto operator<<(std::ostream &os, const File &rhs) -> std::ostream & {
-	os << "\r\e[00C" << rhs.inode;
-	os << "\r\e[15C" << rhs.size;
-	os << "\r\e[25C" << rhs.hardlinks;
-	os << "\r\e[31C" << rhs.relname;
-	os << "\r\e[70C" << rhs.name;
+	os << rhs.inode;
+	os << "\e[" << 15 - std::to_string(rhs.inode).size() << "C" << rhs.size;
+	os << "\e[" << 10 - std::to_string(rhs.size).size() << "C" << rhs.hardlinks;
+	os << "\e[" << 6 - std::to_string(rhs.hardlinks).size() << "C" << rhs.relname;
+	os << "\e[" << 39 - rhs.relname.size() << "C" << rhs.name;
+	os << "\e[" << 39 - rhs.name.size() << "C";
 	return os;
 }

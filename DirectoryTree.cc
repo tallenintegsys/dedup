@@ -18,7 +18,6 @@ DirectoryTree::DirectoryTree(const std::string &root) {
 void DirectoryTree::scan(std::string path) {
 	if (path[0] == '/')
 		path = path.substr(1);
-	//	std::cout << " inode         size      hlnk  relpath                                path \n";
 	struct dirent **de;
 	int n = scandirat(AT_FDCWD, (this->root + "/" + path).c_str(), &de, NULL, alphasort);
 	if (n < 0) {
@@ -33,10 +32,6 @@ void DirectoryTree::scan(std::string path) {
 		if (de[n]->d_type == DT_DIR) {
 			//	directory
 			std::string dirname(de[n]->d_name);
-			std::cout << root;
-			if (!path.empty())
-				std::cout << "/" + path;
-			std::cout << "/" + dirname << "\n";
 			scan(path + "/" + dirname); //	recurse
 		}
 		if (de[n]->d_type == DT_REG) {
@@ -65,27 +60,26 @@ void DirectoryTree::AddFile(File *file) {
 	// insert into relativepath table
 	filesbyrelativepath.insert(std::pair<std::string, File *>(file->subname, file));
 
-	std::cout << file->name << "\n";
-
 	// spin through the other directorie trees for candidates for hard linking
 	for (DirectoryTree *dt : trees) {
 		if (dt == this)
 			continue; // skip our directory tree
 
-		if (dt->filesbyrelativepath.find(file->subname) != dt->filesbyrelativepath.end()) { // they have the same name
-			File *foundfile = dt->filesbyrelativepath.find(file->subname)->second;
-			if (foundfile->inode == file->inode) {
-				std::cout << *file << std::endl;
-				std::cout << *foundfile << std::endl;
-				continue; //	they are already hard linked
-			}
-			File *dfile = dt->filesbyrelativepath[file->subname];
-			if ((*file) == (*dfile)) {
-				std::cout << file->name;
-				std::cout << " = ";
-				std::cout << dfile->name;
-				std::cout << std::endl;
-			}
+		static bool firsttime = false;
+		if (!firsttime) {
+			firsttime = true;
+			std::cout << " inode         size      hlnk  relpath                                path ";
+			std::cout << "                                         ";
+			std::cout << " inode         size      hlnk  relpath                                path ";
+			std::cout << std::endl;
+		}
+
+		File *dfile = dt->filesbyrelativepath[file->subname];
+		if ((*file) == (*dfile)) {
+			std::cout << *file;
+			std::cout << " =     ";
+			std::cout << *dfile;
+			std::cout << std::endl;
 		}
 	}
 }

@@ -25,10 +25,11 @@ auto File::operator==(File &rhs) -> int {
 		return equality::no; //	ignore empty files
 	}
 	File *foundfile;
-	//	check inode first, it computationally cheaper
+	//	check inode first, it's computationally cheaper
 	if (rhs.inode == this->inode)
 		return equality::hardlink;
-	if (size == rhs.size) { //	compare size
+	//  check size
+	if (size == rhs.size) {
 		if (sha == NULL) {
 			calc_sha();
 		}
@@ -92,11 +93,13 @@ auto File::isHardlink(File *file) -> bool {
 }
 
 auto operator<<(std::ostream &os, const File &rhs) -> std::ostream & {
-	os << rhs.inode;
-	os << "\e[" << 15 - std::to_string(rhs.inode).size() << "C" << rhs.size;
-	os << "\e[" << 10 - std::to_string(rhs.size).size() << "C" << rhs.hardlinks;
-	os << "\e[" << 6 - std::to_string(rhs.hardlinks).size() << "C" << rhs.relname;
-	os << "\e[" << 39 - rhs.relname.size() << "C" << rhs.name;
-	os << "\e[" << 39 - rhs.name.size() << "C";
+	/* show detailed debug info
+os << rhs.inode;
+os << "\e[" << 15 - std::to_string(rhs.inode).size() << "C" << rhs.size;
+os << "\e[" << 10 - std::to_string(rhs.size).size() << "C" << rhs.hardlinks;
+os << "\e[" << 6 - std::to_string(rhs.hardlinks).size() << "C" << rhs.relname;
+os << "\e[" << 39 - rhs.relname.size() << "C" << rhs.name;
+os << "\e[" << 39 - rhs.name.size() << "C"; */
+	os << rhs.name;
 	return os;
 }

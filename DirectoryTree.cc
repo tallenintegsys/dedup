@@ -47,6 +47,7 @@ void DirectoryTree::scan(std::string path) {
 		}
 	}
 	free(de);
+	this->PrintByRelativepath();
 }
 
 void DirectoryTree::AddFile(File *file) {
@@ -65,22 +66,23 @@ void DirectoryTree::AddFile(File *file) {
 		if (dt == this)
 			continue; // skip our directory tree
 
-		static bool firsttime = false;
-		if (!firsttime) {
-			firsttime = true;
-			std::cout << " inode         size      hlnk  relpath                                path ";
-			std::cout << "                                         ";
-			std::cout << " inode         size      hlnk  relpath                                path ";
-			std::cout << std::endl;
-		}
-
-		File *dfile = dt->filesbyrelativepath[file->subname];
-		if ((*file) == (*dfile)) {
-			std::cout << *file;
-			std::cout << " =     ";
-			std::cout << *dfile;
-			std::cout << std::endl;
-		}
+		/* show detailed debug info
+static bool firsttime = false;
+if (!firsttime) {
+firsttime = true;
+std::cout << " inode         size      hlnk  relpath                                path ";
+std::cout << "                                         ";
+std::cout << " inode         size      hlnk  relpath                                path ";
+std::cout << std::endl;
+} */
+		/* debug
+				File *dfile = dt->filesbyrelativepath[file->subname];
+				if ((*file) == (*dfile)) {
+					std::cout << *file;
+					std::cout << " =     ";
+					std::cout << *dfile;
+					std::cout << std::endl;
+				} */
 	}
 }
 
@@ -134,10 +136,14 @@ void DirectoryTree::PrintBySize(void) {
 }
 
 void DirectoryTree::PrintByRelativepath(void) {
-	std::cout << std::endl << "By relative path:" << std::left << std::endl;
+	//	std::cout << std::endl << "By relative path:" << std::left << std::endl;
 	for (auto pf : filesbyrelativepath) {
 		auto f = pf.second;
-		std::cout << std::setw(30) << pf.first << std::setw(10) << f->size << std::setw(20) << f->name.substr(0, 35) << "\t";
+		std::cout << std::setw(30) << pf.first;
+		std::cout << std::setw(10) << f->size;
+		std::cout << std::setw(40) << f->name;
+		std::cout << std::setw(40) << f->subname;
+		std::cout << std::setw(40) << f->relname;
 		if (f->sha) {
 			for (int i = 61; i < 64; i++) {
 				printf("%02x", f->sha[i]);
@@ -147,7 +153,8 @@ void DirectoryTree::PrintByRelativepath(void) {
 			std::cout << std::endl;
 		}
 	}
-	std::cout << std::right << std::endl;
+	std::cout << std::right;
+	//	std::cout << std::endl;
 }
 
 DirectoryTree::~DirectoryTree() {

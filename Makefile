@@ -1,16 +1,13 @@
 CXXFLAGS= -g -std=gnu++20
 
 
-dedup: dedup.o File.o DirectoryTree.o
+dedup: dedup.o FileDB.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lssl -lcrypto
 
 dedup.o: dedup.cc
 
-File.o: File.cc File.h
+FileDB.o: FileDB.cc FileDB.h
 
-DirectoryTree.o: DirectoryTree.cc DirectoryTree.h
-
-main:
 
 clean:
 	rm -f dedup *.o

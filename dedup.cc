@@ -1,4 +1,4 @@
-#include "DirectoryTree.h"
+#include "FileDB.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -46,12 +46,16 @@ int main(int argc, char **argv) {
 		std::cout << i << ":   " << argv[i] << std::endl;
 	}
 
+	FileDB filedb;
 	for (auto path : paths) {
 		std::cout << path << "\n";
 		// recursive_directory_iterator
 		for (auto const &dir_entry : std::filesystem::recursive_directory_iterator{path}) {
 			std::cout << dir_entry << '\n';
+			if (dir_entry.is_regular_file())
+				filedb.addFile(dir_entry);
 		}
 	}
+	filedb.printBySHA();
 	exit(EXIT_SUCCESS);
 }

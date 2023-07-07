@@ -51,11 +51,14 @@ int main(int argc, char **argv) {
 		std::cout << path << "\n";
 		// recursive_directory_iterator
 		for (auto const &dir_entry : std::filesystem::recursive_directory_iterator{path}) {
-			std::cout << dir_entry << '\n';
-			if (dir_entry.is_regular_file())
+			if (dir_entry.is_regular_file()) {
+				std::cout << dir_entry << '\n';
 				filedb.addFile(dir_entry);
+			}
 		}
 	}
-	filedb.printBySHA();
+
+	//	filedb.printBySHA();
+	filedb.printDups();
 	exit(EXIT_SUCCESS);
 }

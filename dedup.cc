@@ -43,16 +43,16 @@ int main(int argc, char **argv) {
 	std::list<std::filesystem::path> paths;
 	for (int i = optind; i < argc; i++) {
 		paths.push_back(std::filesystem::path(std::string(argv[i])));
-		std::cout << i << ":   " << argv[i] << std::endl;
+		//std::cout << i << ":   " << argv[i] << std::endl;
 	}
 
 	FileDB filedb;
 	for (auto path : paths) {
-		std::cout << path << "\n";
+		//std::cout << path << "\n";
 		// recursive_directory_iterator
 		for (auto const &dir_entry : std::filesystem::recursive_directory_iterator{path}) {
 			if (dir_entry.is_regular_file()) {
-				std::cout << dir_entry << '\n';
+				//std::cout << dir_entry << '\n';
 				filedb.addFile(dir_entry);
 			}
 		}

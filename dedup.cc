@@ -1,12 +1,12 @@
 #include "DirectoryTree.h"
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
 #include <getopt.h>
+#include <iostream>
+#include <list>
 #include <string>
 #include <unistd.h>
-#include <fstream>
-#include <iostream>
-#include <filesystem>
-#include <algorithm>
-#include <list>
 
 static struct option const long_options[] = {
 		{"notyet", no_argument, NULL, 'n'}, {"temp", no_argument, NULL, 't'}, {NULL, 0, NULL, 0}};
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n", argv[0]);
 			exit(EXIT_FAILURE);
 		} // switch
-	} // while
+	}  // while
 
 	std::list<std::filesystem::path> paths;
 	for (int i = optind; i < argc; i++) {
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	for (auto path : paths) {
 		std::cout << path << "\n";
 		// recursive_directory_iterator
-		for (auto const& dir_entry : std::filesystem::recursive_directory_iterator{path}) {
+		for (auto const &dir_entry : std::filesystem::recursive_directory_iterator{path}) {
 			std::cout << dir_entry << '\n';
 		}
 	}

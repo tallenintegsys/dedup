@@ -14,9 +14,12 @@
 
 auto operator<<(std::ostream &os, const Sha512 &rhs) -> std::ostream & {
 	os << std::hex;
-	for (unsigned char c : rhs) {
+	for (int i = 0; i < 8; i++)
+		os << std::setw(2) << std::setfill('0') << (int)rhs[i];
+	/*for (unsigned char c : rhs) {
 		os << std::setw(2) << std::setfill('0') << (int)c;
-	}
+	}*/
+	
 	return os;
 }
 
@@ -41,47 +44,47 @@ void FileDB::printBySHA(void) {
 void FileDB::printDups(void) {
 	std::cout << "print dups \n";
 
-	std::multimap<Sha512, fs::directory_entry> filesThatAreCopies;
-	std::set<Sha512> shasThatAreCopies;
+	// find possible dups
+	std::multimap<Sha512, fs::directory_entry> filesWithSameSha;
+	std::set<Sha512> possibleDups; //shas occur more than once but could be hard linked
 	for (auto f : filesBySha) {
 		Sha512 sha512 = f.first;
 		if (filesBySha.count(sha512) < 2)
 			continue; // there's only one
-		if (filesThatAreCopies.count(sha512) > 0)
+		if (filesWithSameSha.count(sha512) > 0)
 			continue; // already got this one
 		auto range = filesBySha.equal_range(sha512);
 		for (auto r = range.first; r != range.second; ++r)
-			filesThatAreCopies.emplace(r->first, r->second);
-		shasThatAreCopies.emplace(sha512);
+			filesWithSameSha.emplace(r->first, r->second);
+		possibleDups.emplace(sha512);
 	}
 
-	std::cout << "matching SHAs\n";
-	for (Sha512 s : shasThatAreCopies) {
-		std::cout << s << "\n";
-		auto range = filesThatAreCopies.equal_range(s);
-		ino_t prevInode = 0;
-		for (auto c = range.first; c != range.second; ++c) {
-			std::cout << c->first << "   " << c->second << "\n";
-			ino_t inode = getInode(c->second);
-			if (prevInode != 0 && inode != prevInode)
-				std::cout << c->second << " ia a dup\n";
-			prevInode = inode;
+	// find actual dups (not hard links)
+	for (Sha512 sha512 : possibleDups) {
+		std::cout << "checking " << sha512 << "...\n";
+		std::multimap<ino_t, fs::directory_entry> filesWithSameShaByInode;
+		auto range = filesWithSameSha.equal_range(sha512);
+		for (auto fileWithSameSha = range.first; fileWithSameSha != range.second; ++fileWithSameSha) {
+			std::cout << fileWithSameSha->first << "   " << fileWithSameSha->second << "\n";
+			ino_t inode = getInode(fileWithSameSha->second);
+			filesWithSameShaByInode.emplace(inode, fileWithSameSha->second);
 		}
-	};
+		ino_t inode = filesWithSameShaByInode.begin()->first;
+		for (auto f : filesWithSameShaByInode) {
+			std::cout << std::dec << f.first << "   " << f.second;
+			if (f.first == inode)
+				std::cout << " is already hard linked\n";
+			else
+				std::cout << " is a duplicate\n";
+		}
 
-	/*
-
-std::vector<fs::directory_entry> matchingShaFiles;
-auto fbs = filesBySha.equal_range(sha512);
-for (auto i = fbs.first; i != fbs.second; ++i) {
-	if (i->second == file)
-		continue;
-	matchingShaFiles.emplace_back(i->second);
-}
-std::cout << "this file: " << file.path() << "\n";
-for (auto j : matchingShaFiles)
-	std::cout << "matching file(s): " << j.path() << "\n" ;
+		/*if (filesWithSameShaByInode.count(sha512) > 1)
+			std::cout << " is a dup\n";
+		else
+			std::cout << " is not a dup\n";
 */
+		filesWithSameShaByInode.clear();
+	};
 }
 
 bool FileDB::isShaDup(const Sha512 &sha512) {

@@ -14,8 +14,8 @@ class Sha512 : public std::vector<unsigned char> {
 };
 
 class FileDB {
-	std::multimap<Sha512, fs::directory_entry> filesBySha;
-	std::multimap<ino_t, fs::directory_entry> filesByInode;
+	std::multimap<Sha512, const fs::directory_entry> filesBySha;
+	std::multimap<ino_t, const fs::directory_entry> filesByInode;
 
 	/// @brief
 	/// @param

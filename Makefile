@@ -1,4 +1,4 @@
-CXXFLAGS= -g -std=gnu++20
+CXXFLAGS= -g -std=gnu++23
 
 
 dedup: dedup.o FileDB.o

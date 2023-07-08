@@ -24,12 +24,11 @@ FileDB::FileDB() {
 }
 
 void FileDB::addFile(const fs::directory_entry &file) {
-
 	Sha512 sha512 = calcSha(file);
-	filesBySha.emplace(sha512, file);
+	auto fbs = filesBySha.emplace(sha512, file);
 
 	ino_t inode = getInode(file);
-	filesByInode.emplace(inode, file);
+	auto fbi = filesByInode.emplace(inode, file);
 }
 
 void FileDB::printBySHA(void) {
@@ -42,13 +41,47 @@ void FileDB::printBySHA(void) {
 void FileDB::printDups(void) {
 	std::cout << "print dups \n";
 
-	for (auto i = filesBySha.begin(); i != filesBySha.end(); ++i) {
-		ino_t inode = getInode(i->second);
-		auto fi = filesByInode.equal_range(inode);
-		for (auto j = fi.first; j != fi.second; ++j) {
-			std::cout << i->second.path() << "   \n";
-		}
+	std::multimap<Sha512, fs::directory_entry> filesThatAreCopies;
+	std::set<Sha512> shasThatAreCopies;
+	for (auto f : filesBySha) {
+		Sha512 sha512 = f.first;
+		if (filesBySha.count(sha512) < 2)
+			continue; // there's only one
+		if (filesThatAreCopies.count(sha512) > 0)
+			continue; // already got this one
+		auto range = filesBySha.equal_range(sha512);
+		for (auto r = range.first; r != range.second; ++r)
+			filesThatAreCopies.emplace(r->first, r->second);
+		shasThatAreCopies.emplace(sha512);
 	}
+
+	std::cout << "matching SHAs\n";
+	for (Sha512 s : shasThatAreCopies) {
+		std::cout << s << "\n";
+		auto range = filesThatAreCopies.equal_range(s);
+		ino_t prevInode = 0;
+		for (auto c = range.first; c != range.second; ++c) {
+			std::cout << c->first << "   " << c->second << "\n";
+			ino_t inode = getInode(c->second);
+			if (prevInode != 0 && inode != prevInode)
+				std::cout << c->second << " ia a dup\n";
+			prevInode = inode;
+		}
+	};
+
+	/*
+
+std::vector<fs::directory_entry> matchingShaFiles;
+auto fbs = filesBySha.equal_range(sha512);
+for (auto i = fbs.first; i != fbs.second; ++i) {
+	if (i->second == file)
+		continue;
+	matchingShaFiles.emplace_back(i->second);
+}
+std::cout << "this file: " << file.path() << "\n";
+for (auto j : matchingShaFiles)
+	std::cout << "matching file(s): " << j.path() << "\n" ;
+*/
 }
 
 bool FileDB::isShaDup(const Sha512 &sha512) {
@@ -60,20 +93,10 @@ bool FileDB::isInodeDup(const ino_t &inode) {
 }
 
 bool FileDB::isDup(const fs::directory_entry &file, const Sha512 &sha512, const ino_t &inode) {
-	if (!isShaDup(sha512))
-		return false;
 
-	std::vector<fs::directory_entry> files;
-	auto fs = filesBySha.equal_range(sha512);
-	for (auto i = fs.first; i != fs.second; ++i) {
-		ino_t inode = getInode(i->second);
-		auto fi = filesByInode.equal_range(inode);
-		for (auto j = fi.first; j != fi.second; ++j) {
-			files.emplace_back(j->second);
-		}
-	}
 	return true;
 }
+
 ino_t FileDB::getInode(const fs::directory_entry &file) {
 	struct stat buf;
 	int rs = stat(file.path().c_str(), &buf);
@@ -126,7 +149,7 @@ Sha512 FileDB::calcSha(const fs::directory_entry &file) {
 	for (int i = 0; i < 64; i++)
 		res.emplace_back(md_value[i]);
 	return res;
-};
+}
 
 FileDB::~FileDB() {
 }

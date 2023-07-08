@@ -13,7 +13,7 @@ clean:
 	rm -f dedup *.o
 
 valgrind: dedup
-	valgrind --leak-check=full ./dedup testfiles/
+	valgrind --leak-check=full ./dedup test*
 
 .PHONY: tags beautify
 

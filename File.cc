@@ -1,6 +1,6 @@
 #include "File.h"
 
-File::File(const std::string &name) {
+File2::File(const std::string &name) {
 	this->name = name;
 	this->relname = name.substr(name.find_first_of("/") + 1);
 	this->subname = relname.substr(relname.find_first_of("/") + 1);
@@ -15,12 +15,12 @@ File::File(const std::string &name) {
 	hardlinks = sb.st_nlink;
 }
 
-void File::link(File *file) {
+void File2::link(File *file) {
 	dup = true;
 	file->dup = true; //	XXX this is for testing
 }
 
-auto File::operator==(File &rhs) -> int {
+auto File2::operator==(File &rhs) -> int {
 	if ((size == 0) || (rhs.size == 0)) {
 		return equality::no; //	ignore empty files
 	}
@@ -41,7 +41,7 @@ auto File::operator==(File &rhs) -> int {
 	return equality::no; //	different sizes
 }
 
-void File::calc_sha() {
+void File2::calc_sha() {
 	EVP_MD_CTX *mdctx;
 	const EVP_MD *md;
 	char *file_buffer;
@@ -88,7 +88,7 @@ void File::calc_sha() {
 	return;
 };
 
-auto File::isHardlink(File *file) -> bool {
+auto File2::isHardlink(File *file) -> bool {
 	return file->inode == this->inode;
 }
 

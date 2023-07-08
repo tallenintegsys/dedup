@@ -1,4 +1,4 @@
-#include "FileDB.h"
+#include "FileDB2.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -10,17 +10,6 @@
 
 static struct option const long_options[] = {
 		{"notyet", no_argument, NULL, 'n'}, {"temp", no_argument, NULL, 't'}, {NULL, 0, NULL, 0}};
-
-void printsha(unsigned int *sha) {
-	for (int i = 0; i < 64; i++) {
-		if (i == 16) {
-			i += 32;
-			printf("...");
-		}
-		printf("%02x", sha[i]);
-	}
-	printf("\n");
-}
 
 int main(int argc, char **argv) {
 	while (true) {
@@ -46,7 +35,7 @@ int main(int argc, char **argv) {
 		//	std::cout << i << ":   " << argv[i] << std::endl;
 	}
 
-	FileDB filedb;
+	FileDB2 filedb;
 	for (auto path : paths) {
 		//	std::cout << path << "\n";
 		// 	recursive_directory_iterator
@@ -59,5 +48,6 @@ int main(int argc, char **argv) {
 
 	//	filedb.printBySHA();
 	filedb.printDups();
-	exit(EXIT_SUCCESS);
+	
+	return EXIT_SUCCESS;
 }

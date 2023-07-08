@@ -3,13 +3,21 @@
 #include <set>
 #include <string>
 #include <unistd.h>
+#include <vector>
 #include "Sha512.h"
 
 namespace fs = std::filesystem;
 
-class FileDB {
-	std::multimap<Sha512, const fs::directory_entry> filesBySha;
-	std::multimap<ino_t, const fs::directory_entry> filesByInode;
+class FileDB2 {
+
+	typedef struct {
+		fs::directory_entry dirent;
+		ino_t inode;
+		Sha512 sha;
+	} File;
+
+	std::multimap<Sha512, const File> filesBySha;
+	std::multimap<ino_t, const File> filesByInode;
 
 
 	/// @brief
@@ -23,26 +31,18 @@ class FileDB {
 
 	bool isInodeDup(const ino_t &);
 
-	bool isDup(const fs::directory_entry &, const Sha512 &, const ino_t &);
-
 	public:
-	//! Construct a ned FileDB
+	//! Construct a new FileDB2
 	/*!
 		Contains multimaps of all files by inode and size
 	*/
-	FileDB();
+	FileDB2();
 
 	//! add File to containers
 	/*!
 		thus creating an ad-hoc DB
 	*/
 	void addFile(const fs::directory_entry &);
-
-	//! Print all Files by inode
-	/*!
-		...for debuggering
-	*/
-	void printBySHA(void);
 
 	/// @brief
 	/// @param
@@ -52,5 +52,5 @@ class FileDB {
 	/*!
 		smart pointers would obviate this
 	*/
-	~FileDB();
+	~FileDB2();
 };

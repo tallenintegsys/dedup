@@ -1,12 +1,12 @@
 CXXFLAGS= -g -std=gnu++23
 
 
-dedup: dedup.o FileDB.o
+dedup: dedup.o FileDB2.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lssl -lcrypto
 
 dedup.o: dedup.cc
 
-FileDB.o: FileDB.cc FileDB.h
+FileDB.o: FileDB2.cc FileDB2.h
 
 
 clean:

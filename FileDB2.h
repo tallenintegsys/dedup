@@ -45,8 +45,6 @@ class FileDB2 {
 
 	std::multimap<ino_t, FileDB2::File> filesWithSameSha(Sha512 sha);
 
-	std::set<Sha512> findDupShas();
-
 	public:
 	//! Construct a new FileDB2
 	/*!
@@ -65,8 +63,6 @@ class FileDB2 {
 	void printDups(void);
 
 	void printFilesWithSameSha(void);
-
-	void printFilesWithSameShaDifferentInode(void);
 
 	//! cleanup your mess (RAII)
 	/*!

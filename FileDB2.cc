@@ -56,17 +56,6 @@ void FileDB2::printFilesWithSameSha(void) {
 	}
 }
 
-std::set<Sha512> FileDB2::findDupShas() {
-	std::set<Sha512> dupShas; //shas that occur more than once but could be hard linked
-	for (auto f : filesBySha) {
-		Sha512 sha512 = f.first;
-		if (filesBySha.count(sha512) < 2)
-			continue; // there's only one
-		dupShas.emplace(sha512);
-	}
-	return dupShas;
-}
-
 void FileDB2::printDups(void) {
 	std::cout << "print dups \n";
 	for (auto sha : uniqueShas) {

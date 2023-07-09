@@ -43,14 +43,6 @@ void FileDB2::printDups(void) {
 
 }
 
-bool FileDB2::isShaDup(const Sha512 &sha512) {
-	return filesBySha.count(sha512) > 1;
-}
-
-bool FileDB2::isInodeDup(const ino_t &inode) {
-	return filesByInode.count(inode) > 1;
-}
-
 ino_t FileDB2::getInode(const fs::directory_entry &file) {
 	struct stat buf;
 	int rs = stat(file.path().c_str(), &buf);

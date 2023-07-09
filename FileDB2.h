@@ -34,10 +34,6 @@ class FileDB2 {
 
 	ino_t getInode(const fs::directory_entry &);
 
-	bool isShaDup(const Sha512 &);
-
-	bool isInodeDup(const ino_t &);
-
 	public:
 	//! Construct a new FileDB2
 	/*!

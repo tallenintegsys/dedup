@@ -11,7 +11,7 @@
 
 namespace fs = std::filesystem;
 
-class FileDB2 {
+class FileDB {
 
 	class File {
 public:
@@ -43,7 +43,7 @@ public:
 	/*!
 		Contains multimaps of all files by inode and size
 	*/
-	FileDB2(bool relink);
+	FileDB(bool relink);
 
 	//! add File to containers
 	/*!
@@ -59,6 +59,6 @@ public:
 	/*!
 		smart pointers would obviate this
 	*/
-	~FileDB2();
+	~FileDB();
 };
 #endif // _FILEDB_H

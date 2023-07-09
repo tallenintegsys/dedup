@@ -1,12 +1,12 @@
 CXXFLAGS= -g -std=gnu++23
 
 
-dedup: dedup.o FileDB2.o
+dedup: dedup.o FileDB.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lssl -lcrypto
 
 dedup.o: dedup.cc
 
-FileDB2.o: FileDB2.cc FileDB2.h Sha512.h
+FileDB.o: FileDB.cc FileDB.h Sha512.h
 
 valgrind: dedup
 	valgrind --leak-check=full ./dedup test*

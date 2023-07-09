@@ -1,4 +1,4 @@
-#include "FileDB2.h"
+#include "FileDB.h"
 #include <algorithm>
 #include <dirent.h>
 #include <fcntl.h>
@@ -11,11 +11,11 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-FileDB2::FileDB2(bool relink) {
-	FileDB2::relink = relink;
+FileDB::FileDB(bool relink) {
+	FileDB::relink = relink;
 }
 
-void FileDB2::addFile(const fs::directory_entry &dirent) {
+void FileDB::addFile(const fs::directory_entry &dirent) {
 	Sha512 sha = calcSha(dirent);
 	ino_t inode = getInode(dirent);
 	File file{dirent, inode, sha};
@@ -23,19 +23,19 @@ void FileDB2::addFile(const fs::directory_entry &dirent) {
 	uniqueShas.emplace(sha);
 }
 
-void FileDB2::printDups(void) {
+void FileDB::printDups(void) {
 	std::cout << "print dups \n";
 	for (auto sha : uniqueShas) {
 		if (filesBySha.count(sha) == 1)
 			continue; // skip if only one
 		auto ssr = filesBySha.equal_range(sha);
-		std::multimap<ino_t, const FileDB2::File> filesWithSameSha;
+		std::multimap<ino_t, const FileDB::File> filesWithSameSha;
 		for (auto filePair = ssr.first; filePair != ssr.second; filePair++)
 			filesWithSameSha.emplace(filePair->second.inode, filePair->second);
 		File firstFile = filesWithSameSha.begin()->second;
 		for (auto fwss : filesWithSameSha) {
 			if (fwss.second.inode != firstFile.inode) {
-				std::cout << "->" << fwss.second;
+				std::cout << fwss.second;
 				if (relink) {
 					std::cout << "rm " << fwss.second.dirent.path() << "\n";
 					std::cout << "ln " << firstFile.dirent.path() << " " << fwss.second.dirent.path() << "\n";
@@ -45,7 +45,7 @@ void FileDB2::printDups(void) {
 	}
 }
 
-ino_t FileDB2::getInode(const fs::directory_entry &file) {
+ino_t FileDB::getInode(const fs::directory_entry &file) {
 	struct stat buf;
 	int rs = stat(file.path().c_str(), &buf);
 	if (rs != 0) {
@@ -55,7 +55,7 @@ ino_t FileDB2::getInode(const fs::directory_entry &file) {
 	return buf.st_ino;
 }
 
-Sha512 FileDB2::calcSha(const fs::directory_entry &dirent) {
+Sha512 FileDB::calcSha(const fs::directory_entry &dirent) {
 	EVP_MD_CTX *mdctx;
 	const EVP_MD *md;
 	char *file_buffer;
@@ -99,5 +99,5 @@ Sha512 FileDB2::calcSha(const fs::directory_entry &dirent) {
 	return res;
 }
 
-FileDB2::~FileDB2() {
+FileDB::~FileDB() {
 }

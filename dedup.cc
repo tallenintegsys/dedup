@@ -1,4 +1,4 @@
-#include "FileDB2.h"
+#include "FileDB.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 	for (int i = optind; i < argc; i++)
 		paths.push_back(std::filesystem::path(std::string(argv[i])));
 
-	FileDB2 filedb(relink);
+	FileDB filedb(relink);
 	for (auto path : paths) {
 		//	std::cout << path << "\n";
 		// 	recursive_directory_iterator

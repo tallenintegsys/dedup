@@ -30,13 +30,13 @@ void FileDB2::printDups(void) {
 		if (filesBySha.count(sha) == 1)
 			continue; // skip if only one
 		auto ssr = filesBySha.equal_range(sha);
-		std::multimap<ino_t, FileDB2::File> filesWithSameSha;
+		std::multimap<ino_t, const FileDB2::File*> filesWithSameSha;
 		for (auto filePair = ssr.first; filePair != ssr.second; filePair++)
-			filesWithSameSha.emplace(filePair->second.inode, filePair->second);
+			filesWithSameSha.emplace(filePair->second.inode, &filePair->second);
 		ino_t inode = filesWithSameSha.begin()->first;
 		for (auto fwss : filesWithSameSha) {
-			if (fwss.second.inode != inode)
-			std::cout << fwss.second;
+			if (fwss.second->inode != inode)
+			std::cout << *fwss.second;
 		}
 	}
 

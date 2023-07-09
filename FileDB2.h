@@ -47,8 +47,6 @@ class FileDB2 {
 
 	std::set<Sha512> findDupShas();
 
-	std::vector<FileDB2::File> filesWithSameShaDifferentInode(std::vector<FileDB2::File>);
-
 	public:
 	//! Construct a new FileDB2
 	/*!

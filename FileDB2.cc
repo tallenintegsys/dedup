@@ -67,26 +67,6 @@ std::set<Sha512> FileDB2::findDupShas() {
 	return dupShas;
 }
 
-std::vector<FileDB2::File> FileDB2::filesWithSameShaDifferentInode(std::vector<FileDB2::File> files) {
-	std::vector<FileDB2::File> ret;
-
-	//std::multimap<ino_t, FileDB2::File> filesWithSameShaByInode = filesWithSameSha(sha);
-	std::set<Sha512> dupShas = findDupShas();
-	for (auto dupSha : dupShas) {
-
-	}
-	return ret;
-}
-
-void FileDB2::printFilesWithSameShaDifferentInode(void) {
-	auto files = filesWithSameShaDifferentInode(filesWithSameSha());
-	std::cout << "printFilesWithSameShaDifferentInode\n";
-	std::cout << "filename                      inode               sha\n";
-	for (auto f : files) {
-		std::cout << f;
-	}
-}
-
 void FileDB2::printDups(void) {
 	std::cout << "print dups \n";
 	for (auto sha : uniqueShas) {

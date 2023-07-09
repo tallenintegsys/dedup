@@ -3,7 +3,7 @@ echo -e "\e[36m$ ./dedup test*\e[m"
 ./dedup test*
 
 echo -e "\e[36m$ find test* -type f -exec sha512sum {} \; \e[m"
-find test* -type f -exec sha512sum {} \;
+find test* -type f -exec sha512sum {} \; | sed -E "s/(^.{16}).*\ \ (.*)/\1\ \ \ \2/g"
 
 echo -e "\e[36m$ find test* -type f -exec ls -i {} \; \e[m"
 find test* -type f -exec ls -i {} \;

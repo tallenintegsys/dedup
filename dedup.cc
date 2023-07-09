@@ -47,7 +47,8 @@ int main(int argc, char **argv) {
 	}
 
 	//	filedb.printBySHA();
-	filedb.printDups();
+	//filedb.printDups();
+	filedb.printFilesWithSameSha();
 	
 	return EXIT_SUCCESS;
 }

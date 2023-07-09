@@ -8,10 +8,8 @@ class Sha512 : public std::vector<unsigned char> {
 	os << std::hex;
 	for (int i = 0; i < 8; i++)
 		os << std::setw(2) << std::setfill('0') << (int)rhs[i];
-	/*for (unsigned char c : rhs) {
-		os << std::setw(2) << std::setfill('0') << (int)c;
-	}*/
 	
+	os << std::dec;
 	return os;
 	}
 };

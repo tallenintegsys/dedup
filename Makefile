@@ -6,16 +6,15 @@ dedup: dedup.o FileDB2.o
 
 dedup.o: dedup.cc
 
-FileDB.o: FileDB2.cc FileDB2.h
-
-
-clean:
-	rm -f dedup *.o
+FileDB2.o: FileDB2.cc FileDB2.h Sha512.h
 
 valgrind: dedup
 	valgrind --leak-check=full ./dedup test*
 
-.PHONY: tags beautify
+.PHONY: clean tags beautify
+
+clean:
+	rm -f dedup *.o
 
 beautify:
 	clang-format -style=file -i *.cc

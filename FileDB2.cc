@@ -24,6 +24,26 @@ void FileDB2::addFile(const fs::directory_entry &dirent) {
 	auto fbi = filesByInode.emplace(inode, file);
 }
 
+std::vector<FileDB2::File> FileDB2::filesWithSameSha(void) {
+	std::vector<FileDB2::File> ret;
+	
+	for (auto fbs : filesBySha) {
+		Sha512 sha = fbs.first;
+		if (filesBySha.count(sha) > 1)
+			ret.emplace_back(fbs.second);
+	}
+	return ret;
+}
+
+void FileDB2::printFilesWithSameSha(void) {
+	auto files = filesWithSameSha();
+	for (auto f : files) {
+		std::cout << std::setfill(' ') << std::setw(30) << std::left << f.dirent;
+		std::cout << std::setw(20) << f.inode;
+		std::cout << std::setw(30) << f.sha << "\n";
+	}
+}
+
 void FileDB2::printDups(void) {
 
 	std::cout << "print dups \n";
@@ -138,7 +158,4 @@ Sha512 FileDB2::calcSha(const fs::directory_entry &dirent) {
 }
 
 FileDB2::~FileDB2() {
-	filesByInode.clear();
-	filesBySha.clear();
-	std::cout << "FileDB2 destroyed" << std::endl;
 }

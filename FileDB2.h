@@ -31,6 +31,11 @@ class FileDB2 {
 
 	bool isInodeDup(const ino_t &);
 
+	/// @brief get all files with the same SHA only if there is more than one
+	/// @param  none
+	/// @return vector of Files with the same SHA
+	std::vector<File> filesWithSameSha(void);
+	
 	public:
 	//! Construct a new FileDB2
 	/*!
@@ -48,6 +53,8 @@ class FileDB2 {
 	/// @param
 	void printDups(void);
 
+	void printFilesWithSameSha(void);
+	
 	//! cleanup your mess (RAII)
 	/*!
 		smart pointers would obviate this

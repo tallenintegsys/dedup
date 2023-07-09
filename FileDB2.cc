@@ -4,7 +4,6 @@
 #include <fcntl.h>
 #include <fstream>
 #include <getopt.h>
-#include <iomanip>
 #include <iostream>
 #include <list>
 #include <openssl/evp.h>

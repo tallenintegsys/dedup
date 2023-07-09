@@ -1,3 +1,6 @@
+#ifndef _FILEDB_H
+#define _FILEDB_H 1
+
 #include "Sha512.h"
 #include <filesystem>
 #include <map>
@@ -58,3 +61,4 @@ public:
 	*/
 	~FileDB2();
 };
+#endif // _FILEDB_H

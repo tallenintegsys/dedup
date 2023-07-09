@@ -1,3 +1,7 @@
+#ifndef _SHA512_H
+#define _SHA512_H 1
+
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
@@ -13,3 +17,4 @@ class Sha512 : public std::vector<unsigned char> {
 		return os;
 	}
 };
+#endif //_SHA512_H

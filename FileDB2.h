@@ -25,7 +25,7 @@ class FileDB2 {
 
 	std::multimap<Sha512, const File> filesBySha;
 	std::multimap<ino_t, const File> filesByInode;
-
+	std::set<Sha512> uniqueShas;
 
 	/// @brief
 	/// @param
@@ -42,6 +42,8 @@ class FileDB2 {
 	/// @param  none
 	/// @return vector of Files with the same SHA GROUP BY SHA
 	std::vector<File> filesWithSameSha(void);
+
+	std::multimap<ino_t, FileDB2::File> filesWithSameSha(Sha512 sha);
 
 	std::set<Sha512> findDupShas();
 

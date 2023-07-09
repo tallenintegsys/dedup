@@ -17,11 +17,12 @@ FileDB2::FileDB2() {
 }
 
 void FileDB2::addFile(const fs::directory_entry &dirent) {
-	Sha512 sha512 = calcSha(dirent);
+	Sha512 sha = calcSha(dirent);
 	ino_t inode = getInode(dirent);
-	File file {dirent, inode, sha512};
-	auto fbs = filesBySha.emplace(sha512, file);
-	auto fbi = filesByInode.emplace(inode, file);
+	File file {dirent, inode, sha};
+	filesBySha.emplace(sha, file);
+	uniqueShas.emplace(sha);
+	filesByInode.emplace(inode, file);
 }
 
 std::vector<FileDB2::File> FileDB2::filesWithSameSha(void) {
@@ -31,6 +32,15 @@ std::vector<FileDB2::File> FileDB2::filesWithSameSha(void) {
 		Sha512 sha = fbs.first;
 		if (filesBySha.count(sha) > 1)
 			ret.emplace_back(fbs.second);
+	}
+	return ret;
+}
+
+std::multimap<ino_t, FileDB2::File> FileDB2::filesWithSameSha(Sha512 sha) {
+	std::multimap<ino_t, FileDB2::File> ret;
+	auto range = filesBySha.equal_range(sha);
+	for (auto p = range.first; p != range.second; p++) {
+		ret.emplace(p->second.inode, p->second);
 	}
 	return ret;
 }
@@ -59,12 +69,11 @@ std::set<Sha512> FileDB2::findDupShas() {
 
 std::vector<FileDB2::File> FileDB2::filesWithSameShaDifferentInode(std::vector<FileDB2::File> files) {
 	std::vector<FileDB2::File> ret;
-	auto dupShas = findDupShas();
-	for (auto sha : dupShas) {
-		auto range = filesBySha.equal_range(sha);
-		for (auto f = range.first; f != range.second; f++) {
-			ret.emplace_back(f->second);
-		}
+
+	//std::multimap<ino_t, FileDB2::File> filesWithSameShaByInode = filesWithSameSha(sha);
+	std::set<Sha512> dupShas = findDupShas();
+	for (auto dupSha : dupShas) {
+
 	}
 	return ret;
 }
@@ -79,53 +88,20 @@ void FileDB2::printFilesWithSameShaDifferentInode(void) {
 }
 
 void FileDB2::printDups(void) {
-
 	std::cout << "print dups \n";
-
-	// find possible dups
-	std::multimap<Sha512, fs::directory_entry> filesWithSameSha;
-	std::set<Sha512> possibleDups; //shas occur more than once but could be hard linked
-	for (auto f : filesBySha) {
-		Sha512 sha512 = f.first;
-		if (filesBySha.count(sha512) < 2)
-			continue; // there's only one
-		if (filesWithSameSha.count(sha512) > 0)
-			continue; // already got this one
-		auto range = filesBySha.equal_range(sha512);
-		for (auto r = range.first; r != range.second; ++r)
-			filesWithSameSha.emplace(r->first, r->second.dirent);
-		possibleDups.emplace(sha512);
-	}
-
-	// find actual dups (not hard links)
-	for (Sha512 sha512 : possibleDups) {
-		std::cout << "checking " << sha512 << "...\n";
-		std::multimap<ino_t, fs::directory_entry> filesWithSameShaByInode;
-		auto range = filesWithSameSha.equal_range(sha512);
-		for (auto fileWithSameSha = range.first; fileWithSameSha != range.second; ++fileWithSameSha) {
-			std::cout << fileWithSameSha->first << "   " << fileWithSameSha->second << "\n";
-			ino_t inode = getInode(fileWithSameSha->second);
-			filesWithSameShaByInode.emplace(inode, fileWithSameSha->second);
+	for (auto sha : uniqueShas) {
+		if (filesBySha.count(sha) == 1)
+			continue; // skip if only one
+		auto ssr = filesBySha.equal_range(sha);
+		std::multimap<ino_t, FileDB2::File> filesWithSameSha;
+		for (auto filePair = ssr.first; filePair != ssr.second; filePair++)
+			filesWithSameSha.emplace(filePair->second.inode, filePair->second);
+		ino_t inode = filesWithSameSha.begin()->first;
+		for (auto fwss : filesWithSameSha) {
+			if (fwss.second.inode != inode)
+			std::cout << fwss.second;
 		}
-		ino_t inode = filesWithSameShaByInode.begin()->first;
-		for (auto f : filesWithSameShaByInode) {
-			std::cout << std::dec << f.first << "   " << f.second;
-			if (f.first == inode)
-				std::cout << " is already hard linked\n";
-			else
-				std::cout << " is a duplicate\n";
-		}
-		std::cout << "select * from filesWithSameShaByInode where Inode unique\n";
-		for(auto it = filesWithSameShaByInode.begin(), end = filesWithSameShaByInode.end(); it != end; it = filesWithSameShaByInode.upper_bound(it->first)){
-			std::cout << it->first << ' ' << it->second << "\n";
 	}
-		/*if (filesWithSameShaByInode.count(sha512) > 1)
-			std::cout << " is a dup\n";
-		else
-			std::cout << " is not a dup\n";
-*/
-		filesWithSameShaByInode.clear();
-	};
 
 }
 

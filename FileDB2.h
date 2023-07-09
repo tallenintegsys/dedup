@@ -1,17 +1,17 @@
+#include "Sha512.h"
 #include <filesystem>
 #include <map>
 #include <set>
 #include <string>
 #include <unistd.h>
 #include <vector>
-#include "Sha512.h"
 
 namespace fs = std::filesystem;
 
 class FileDB2 {
 
 	class File {
-		public: 
+public:
 		fs::directory_entry dirent;
 		ino_t inode;
 		Sha512 sha;
@@ -22,6 +22,8 @@ class FileDB2 {
 			return os;
 		}
 	};
+
+	bool relink = false;
 
 	std::multimap<Sha512, const File> filesBySha;
 	std::set<Sha512> uniqueShas;
@@ -38,7 +40,7 @@ class FileDB2 {
 	/*!
 		Contains multimaps of all files by inode and size
 	*/
-	FileDB2();
+	FileDB2(bool relink);
 
 	//! add File to containers
 	/*!

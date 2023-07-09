@@ -1,16 +1,15 @@
+#include "Sha512.h"
 #include <filesystem>
 #include <map>
 #include <set>
 #include <string>
 #include <unistd.h>
-#include "Sha512.h"
 
 namespace fs = std::filesystem;
 
 class FileDB {
 	std::multimap<Sha512, const fs::directory_entry> filesBySha;
 	std::multimap<ino_t, const fs::directory_entry> filesByInode;
-
 
 	/// @brief
 	/// @param

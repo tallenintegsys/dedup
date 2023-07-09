@@ -19,7 +19,7 @@ auto operator<<(std::ostream &os, const Sha512 &rhs) -> std::ostream & {
 	/*for (unsigned char c : rhs) {
 		os << std::setw(2) << std::setfill('0') << (int)c;
 	}*/
-	
+
 	return os;
 }
 
@@ -43,7 +43,7 @@ void FileDB::printBySHA(void) {
 
 void colate(void) {
 	// get a list of files grouped by sha where the groups are bigger than 1
-	// get the files 
+	// get the files
 }
 
 void FileDB::printDups(void) {
@@ -51,7 +51,7 @@ void FileDB::printDups(void) {
 
 	// find possible dups
 	std::multimap<Sha512, fs::directory_entry> filesWithSameSha;
-	std::set<Sha512> possibleDups; //shas occur more than once but could be hard linked
+	std::set<Sha512> possibleDups; //	shas occur more than once but could be hard linked
 	for (auto f : filesBySha) {
 		Sha512 sha512 = f.first;
 		if (filesBySha.count(sha512) < 2)
@@ -83,9 +83,10 @@ void FileDB::printDups(void) {
 				std::cout << " is a duplicate\n";
 		}
 		std::cout << "select * from filesWithSameShaByInode where Inode unique\n";
-		for(auto it = filesWithSameShaByInode.begin(), end = filesWithSameShaByInode.end(); it != end; it = filesWithSameShaByInode.upper_bound(it->first)){
+		for (auto it = filesWithSameShaByInode.begin(), end = filesWithSameShaByInode.end(); it != end;
+							it = filesWithSameShaByInode.upper_bound(it->first)) {
 			std::cout << it->first << ' ' << it->second << "\n";
-	}
+		}
 		/*if (filesWithSameShaByInode.count(sha512) > 1)
 			std::cout << " is a dup\n";
 		else

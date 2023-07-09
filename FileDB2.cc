@@ -12,14 +12,14 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-
-FileDB2::FileDB2() {
+FileDB2::FileDB2(bool relink) {
+	FileDB2::relink = relink;
 }
 
 void FileDB2::addFile(const fs::directory_entry &dirent) {
 	Sha512 sha = calcSha(dirent);
 	ino_t inode = getInode(dirent);
-	File file {dirent, inode, sha};
+	File file{dirent, inode, sha};
 	filesBySha.emplace(sha, file);
 	uniqueShas.emplace(sha);
 }
@@ -30,16 +30,20 @@ void FileDB2::printDups(void) {
 		if (filesBySha.count(sha) == 1)
 			continue; // skip if only one
 		auto ssr = filesBySha.equal_range(sha);
-		std::multimap<ino_t, const FileDB2::File*> filesWithSameSha;
+		std::multimap<ino_t, const FileDB2::File> filesWithSameSha;
 		for (auto filePair = ssr.first; filePair != ssr.second; filePair++)
-			filesWithSameSha.emplace(filePair->second.inode, &filePair->second);
-		ino_t inode = filesWithSameSha.begin()->first;
+			filesWithSameSha.emplace(filePair->second.inode, filePair->second);
+		File firstFile = filesWithSameSha.begin()->second;
 		for (auto fwss : filesWithSameSha) {
-			if (fwss.second->inode != inode)
-			std::cout << *fwss.second;
+			if (fwss.second.inode != firstFile.inode) {
+				std::cout << "->" << fwss.second;
+				if (relink) {
+					std::cout << "rm " << fwss.second.dirent.path() << "\n";
+					std::cout << "ln " << firstFile.dirent.path() << " " << fwss.second.dirent.path() << "\n";
+				}
+			}
 		}
 	}
-
 }
 
 ino_t FileDB2::getInode(const fs::directory_entry &file) {

@@ -24,7 +24,6 @@ class FileDB2 {
 	};
 
 	std::multimap<Sha512, const File> filesBySha;
-	std::multimap<ino_t, const File> filesByInode;
 	std::set<Sha512> uniqueShas;
 
 	/// @brief

@@ -22,7 +22,6 @@ void FileDB2::addFile(const fs::directory_entry &dirent) {
 	File file {dirent, inode, sha};
 	filesBySha.emplace(sha, file);
 	uniqueShas.emplace(sha);
-	filesByInode.emplace(inode, file);
 }
 
 void FileDB2::printDups(void) {

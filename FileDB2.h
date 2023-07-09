@@ -38,13 +38,6 @@ class FileDB2 {
 
 	bool isInodeDup(const ino_t &);
 
-	/// @brief get all files with the same SHA only if there is more than one
-	/// @param  none
-	/// @return vector of Files with the same SHA GROUP BY SHA
-	std::vector<File> filesWithSameSha(void);
-
-	std::multimap<ino_t, FileDB2::File> filesWithSameSha(Sha512 sha);
-
 	public:
 	//! Construct a new FileDB2
 	/*!
@@ -61,8 +54,6 @@ class FileDB2 {
 	/// @brief
 	/// @param
 	void printDups(void);
-
-	void printFilesWithSameSha(void);
 
 	//! cleanup your mess (RAII)
 	/*!

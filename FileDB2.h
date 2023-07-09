@@ -10,11 +10,18 @@ namespace fs = std::filesystem;
 
 class FileDB2 {
 
-	typedef struct {
+	class File {
+		public: 
 		fs::directory_entry dirent;
 		ino_t inode;
 		Sha512 sha;
-	} File;
+		friend auto operator<<(std::ostream &os, const File &rhs) -> std::ostream & {
+			os << std::setfill(' ') << std::setw(30) << std::left << rhs.dirent;
+			os << std::setw(20) << rhs.inode;
+			os << std::setw(30) << rhs.sha << "\n";
+			return os;
+		}
+	};
 
 	std::multimap<Sha512, const File> filesBySha;
 	std::multimap<ino_t, const File> filesByInode;
@@ -33,9 +40,13 @@ class FileDB2 {
 
 	/// @brief get all files with the same SHA only if there is more than one
 	/// @param  none
-	/// @return vector of Files with the same SHA
+	/// @return vector of Files with the same SHA GROUP BY SHA
 	std::vector<File> filesWithSameSha(void);
-	
+
+	std::set<Sha512> findDupShas();
+
+	std::vector<FileDB2::File> filesWithSameShaDifferentInode(std::vector<FileDB2::File>);
+
 	public:
 	//! Construct a new FileDB2
 	/*!
@@ -54,7 +65,9 @@ class FileDB2 {
 	void printDups(void);
 
 	void printFilesWithSameSha(void);
-	
+
+	void printFilesWithSameShaDifferentInode(void);
+
 	//! cleanup your mess (RAII)
 	/*!
 		smart pointers would obviate this

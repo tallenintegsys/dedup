@@ -37,10 +37,44 @@ std::vector<FileDB2::File> FileDB2::filesWithSameSha(void) {
 
 void FileDB2::printFilesWithSameSha(void) {
 	auto files = filesWithSameSha();
+	std::cout << "printFilesWithSameSha\n";
+	std::cout << "filename                      inode               sha\n";
 	for (auto f : files) {
 		std::cout << std::setfill(' ') << std::setw(30) << std::left << f.dirent;
 		std::cout << std::setw(20) << f.inode;
 		std::cout << std::setw(30) << f.sha << "\n";
+	}
+}
+
+std::set<Sha512> FileDB2::findDupShas() {
+	std::set<Sha512> dupShas; //shas that occur more than once but could be hard linked
+	for (auto f : filesBySha) {
+		Sha512 sha512 = f.first;
+		if (filesBySha.count(sha512) < 2)
+			continue; // there's only one
+		dupShas.emplace(sha512);
+	}
+	return dupShas;
+}
+
+std::vector<FileDB2::File> FileDB2::filesWithSameShaDifferentInode(std::vector<FileDB2::File> files) {
+	std::vector<FileDB2::File> ret;
+	auto dupShas = findDupShas();
+	for (auto sha : dupShas) {
+		auto range = filesBySha.equal_range(sha);
+		for (auto f = range.first; f != range.second; f++) {
+			ret.emplace_back(f->second);
+		}
+	}
+	return ret;
+}
+
+void FileDB2::printFilesWithSameShaDifferentInode(void) {
+	auto files = filesWithSameShaDifferentInode(filesWithSameSha());
+	std::cout << "printFilesWithSameShaDifferentInode\n";
+	std::cout << "filename                      inode               sha\n";
+	for (auto f : files) {
+		std::cout << f;
 	}
 }
 

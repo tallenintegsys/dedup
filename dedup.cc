@@ -49,6 +49,7 @@ int main(int argc, char **argv) {
 	//	filedb.printBySHA();
 	//filedb.printDups();
 	filedb.printFilesWithSameSha();
+	filedb.printFilesWithSameShaDifferentInode();
 	
 	return EXIT_SUCCESS;
 }

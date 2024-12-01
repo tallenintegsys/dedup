@@ -21,3 +21,5 @@ For now I've relaxed my compiler requirements as I develop with my fancy compile
 In the words of Jeremy Clarkson, this is properly fast!
 
 Now that I have some clarity as to how this will evolve, time to sort out my class hierarchy / OO / model which has been BS heretofore.
+
+[![Super-Linter](https://github.com/tallenintegsys/dedup/actions/workflows/super-linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)

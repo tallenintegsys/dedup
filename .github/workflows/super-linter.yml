@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Lint Code Base
-        uses: github/super-linter@v7
+        uses: github/super-linter@v4 # no v7 doesn't work!
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: "master"
